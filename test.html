@@ -8,13 +8,18 @@
   UART.connect(function(connection) {
     if (!connection) throw "Error!";
     document.getElementById("status").innerHTML = "Connected";
-    connection.on('data', function(d) { document.getElementById("result").innerHTML = d; });
+    connection.on('data', function(d) { document.getElementById("result").innerHTML += d; });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
 
   </script>
-  <button onclick="getTemperature()">Console output</button>
-  <span id="result"></span>
+  <button>Console output</button>
+  <p>
   <span id="status"></span>
- </body>
+  <p>
+   <hr>
+  <span id="result"></span>
+  <hr>
+  <p>
+   </body>
 </html>
