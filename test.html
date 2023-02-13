@@ -4,13 +4,17 @@
  <body>
   <script src="https://www.espruino.com/js/uart.js"></script>
   <script>
-  function getTemperature() {
-    UART.write('console.log("A quick brown fox jumps over lazy dog");\n', function(t) {
-      document.getElementById("result").innerHTML = t;
-    });
-  }
+   
+  UART.connect(function(connection) {
+    if (!connection) throw "Error!";
+    document.getElementById("status").innerHTML = "Connected";
+    connection.on('data', function(d) { document.getElementById("result").innerHTML = d; });
+    connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
+  });
+
   </script>
   <button onclick="getTemperature()">Console output</button>
   <span id="result"></span>
+  <span id="status"></span>
  </body>
 </html>
