@@ -7,8 +7,7 @@
    
   UART.connect(function(connection) {
     if (!connection) throw "Error!";
-    console.log("ChunkSize : ",chunkSize);
-    console.log("flowControlXOFF :",flowControlXOFF);
+    
     document.getElementById("status").innerHTML = "Connected";
     connection.on('data', function(d) { document.getElementById("result").innerHTML += d; });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
