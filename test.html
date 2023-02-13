@@ -5,7 +5,7 @@
   <script src="https://www.espruino.com/js/uart.js"></script>
   <script>
   function getTemperature() {
-    UART.eval('console.log("A quick brown fox jumps over lazy dog");', function(t) {
+    UART.write('console.log("A quick brown fox jumps over lazy dog");\n', function(t) {
       document.getElementById("result").innerHTML = t;
     });
   }
