@@ -10,11 +10,11 @@
     
     document.getElementById("status").innerHTML = "Connected";
     connection.on('data', function(d) { 
-      
+     console.log(d.length,":",d);
      document.getElementById("result").innerHTML += d; 
-     var S = JSON.parse(d);
-      console.log(S);
-      document.getElementById("count").innerHTML = S.rep_count; 
+     //var S = JSON.parse(d);
+     // console.log(S);
+     // document.getElementById("count").innerHTML = S.rep_count; 
     });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
