@@ -60,7 +60,10 @@ function chunks2json(d) {
     connection.on('data', function(d) { 
           record = record + chunks2json(d);
           if (OUT) {
-              var S = JSON.parse(record);
+              var S = {};
+               if record {
+                 S = JSON.parse(record);
+               }
               console.log(S);
               document.getElementById("result").innerHTML += record + "<BR>"; 
               document.getElementById("count").innerHTML = S.rep_count; 
