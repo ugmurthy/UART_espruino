@@ -5,7 +5,8 @@
   <script src="https://www.espruino.com/js/uart.js"></script>
   <script>
   
-  
+var record = ""
+var OUT=true;
 function chunks2json(d) {
     const END="}";
     const START="{"
@@ -52,10 +53,6 @@ function chunks2json(d) {
 
    
   UART.connect(function(connection) {
-   
-    
-    var record = ""
-    var OUT=true;
     
     if (!connection) throw "Error!";
     
@@ -68,6 +65,7 @@ function chunks2json(d) {
               document.getElementById("result").innerHTML += record + "<BR>"; 
               document.getElementById("count").innerHTML = S.rep_count; 
               record="";
+              OUT=true;
           }
     });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
