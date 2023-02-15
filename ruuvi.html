@@ -4,17 +4,71 @@
  <body>
   <script src="https://www.espruino.com/js/uart.js"></script>
   <script>
+  
+  
+function chunks2json(d) {
+    const END="}";
+    const START="{"
+    var idx_start;
+    var idx_end;
+    var res = ""
+    idx_start = d.search(START);
+    idx_end = d.search(END);
+
+    //console.log("proc ", OUT, idx_start, idx_end, d);
+    switch (OUT) {
+        case true:
+            //console.log("Case :",OUT);
+            if (idx_start == -1) {
+                res = ""
+            }
+            if (idx_start > -1 && idx_end > 0) {
+                OUT = false;
+                console.log(OUT);
+                res = d.substring(idx_start, idx_end+1);
+            }
+            if (idx_start > -1) {
+                OUT = false;
+                res = d.substring(idx_start);
+            }
+            break;
+
+        case false:
+            //console.log("Case :",OUT);
+
+            if (idx_end == -1) {
+                OUT = false;
+                res = d;
+            }
+            if (idx_end > -1) {
+                OUT = true;
+                res = d.substring(0, idx_end+1);
+            }
+            break
+    }
+    //console.log("proc returns ", res);
+    return res;
+}
+
    
   UART.connect(function(connection) {
+   
+    
+    var record = ""
+    var OUT=true;
+    
     if (!connection) throw "Error!";
     
     document.getElementById("status").innerHTML = "Connected";
     connection.on('data', function(d) { 
-     console.log(d.length,":",d);
-     document.getElementById("result").innerHTML += d; 
-     //var S = JSON.parse(d);
-     // console.log(S);
-     // document.getElementById("count").innerHTML = S.rep_count; 
+          record = record + chunks2json(d);
+          if (OUT) {
+              var S = JSON.parse(record);
+              console.log(S);
+              document.getElementById("result").innerHTML += record + "<BR>"; 
+              document.getElementById("count").innerHTML = S.rep_count; 
+              record="";
+          }
     });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
@@ -24,9 +78,9 @@
   <p>
   <span id="status"></span>
   <p>
-   <span id="count"></span>
+   <span id="count" style="color:blue;font-size:600%"></span>
    <hr>
-  <span id="result" style="color:blue;font-size:600%"></span>
+  <span id="result" ></span>
   <hr>
   <p>
    </body>
