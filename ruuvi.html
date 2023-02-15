@@ -1,0 +1,30 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <script src="https://www.espruino.com/js/uart.js"></script>
+  <script>
+   
+  UART.connect(function(connection) {
+    if (!connection) throw "Error!";
+    
+    document.getElementById("status").innerHTML = "Connected";
+    connection.on('data', function(d) { 
+      var S = JSON.parse(d);
+      console.log(S);
+      document.getElementById("result").innerHTML = S.rep_count; 
+    });
+    connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
+  });
+
+  </script>
+  <button>Console output</button>
+  <p>
+  <span id="status"></span>
+  <p>
+   <hr>
+  <span id="result" style="color:blue;font-size:600%></span>
+  <hr>
+  <p>
+   </body>
+</html>
