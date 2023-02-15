@@ -61,14 +61,16 @@ function chunks2json(d) {
           record = record + chunks2json(d);
           if (OUT) {
               var S = {};
-               if (record) {
+               if (record) { // ensure non empty record
                  S = JSON.parse(record);
+                 if (S) { // ensure we have a non empty json
+                   console.log(S.sample_count,S.rep_count);
+                   document.getElementById("count").innerHTML = S.rep_count; 
+                   document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                 }
                }
-              console.log(S);
-              document.getElementById("result").innerHTML += record + "<BR>"; 
-              document.getElementById("count").innerHTML = S.rep_count; 
-              record="";
-              OUT=true;
+          record="";
+          OUT=true;
           }
     });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
