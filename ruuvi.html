@@ -10,9 +10,11 @@
     
     document.getElementById("status").innerHTML = "Connected";
     connection.on('data', function(d) { 
-      var S = JSON.parse(d);
+      
+     document.getElementById("result").innerHTML += d; 
+     var S = JSON.parse(d);
       console.log(S);
-      document.getElementById("result").innerHTML = S.rep_count; 
+      document.getElementById("count").innerHTML = S.rep_count; 
     });
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
@@ -22,6 +24,7 @@
   <p>
   <span id="status"></span>
   <p>
+   <span id="count"></span>
    <hr>
   <span id="result" style="color:blue;font-size:600%></span>
   <hr>
