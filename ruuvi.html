@@ -61,7 +61,7 @@ function chunks2json(d) {
           record = record + chunks2json(d);
           if (OUT) {
               var S = {};
-               if record {
+               if (record) {
                  S = JSON.parse(record);
                }
               console.log(S);
