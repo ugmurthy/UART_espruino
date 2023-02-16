@@ -83,7 +83,7 @@ function chunks2json(d) {
           OUT=true;
           }
     });
-    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log("Wrote : ",d});
+    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log("Wrote : ",d)});
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
 
