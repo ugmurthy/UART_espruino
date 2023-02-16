@@ -85,7 +85,7 @@ function chunks2json(d) {
   });
 
   function show_header() {
-      var jsline = ['S.button++','S.button = S.button % 4','console.log(S)'];
+      var jsline = ['S.button++','S.button = S.button % 4','console.log(JSON.stringigy(S))'];
    
       for (let i=0;i<jsline.length; i++) {
           UART.write(jsline[i]+';\n');
@@ -93,16 +93,11 @@ function chunks2json(d) {
   }
   </script>
    <div class="container-sm text-center">
-       
+       <p>
        <button type="button" class="btn btn-primary" onclick="UART.write('LED1.set();\n');">Headers</button>
        <button type="button" class="btn btn-secondary">Secondary</button>
        <button type="button" class="btn btn-success">Success</button>
-       <button type="button" class="btn btn-info">Info</button>
-       <button type="button" class="btn btn-warning">Warning</button>
-       <button type="button" class="btn btn-danger">Danger</button>
-       <button type="button" class="btn btn-dark">Dark</button>
-       <button type="button" class="btn btn-light">Light</button>
-       <button type="button" class="btn btn-link">Link</button>
+       
   </div>
     <div class = "container-sm text-center">   
     <p>
