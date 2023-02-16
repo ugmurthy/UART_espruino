@@ -15,6 +15,7 @@
   
 var record = ""
 var OUT=true;
+var uart_connection=undefined;
 function chunks2json(d) {
     const END="}";
     const START="{"
@@ -63,7 +64,9 @@ function chunks2json(d) {
   UART.connect(function(connection) {
     
     if (!connection) throw "Error!";
-    
+   
+   uart_connection = connection;
+   
     document.getElementById("status").innerHTML = "Connected";
     connection.on('data', function(d) { 
           record = record + chunks2json(d);
@@ -88,13 +91,13 @@ function chunks2json(d) {
       var jsline = ['S.button++','S.button = S.button % 4','console.log(JSON.stringigy(S))'];
    
       for (let i=0;i<jsline.length; i++) {
-          UART.write(jsline[i]+';\n');
+          uart_connection.write(jsline[i]+';\n');
       }
   }
   </script>
    <div class="container-sm text-center">
        <p>
-       <button type="button" class="btn btn-primary" onclick="UART.write('btn=1;\n');">Headers</button>
+       <button type="button" class="btn btn-primary" onclick="uart_connection.write('btn=1;\n');">Headers</button>
        <button type="button" class="btn btn-secondary">Secondary</button>
        <button type="button" class="btn btn-success">Success</button>
        
