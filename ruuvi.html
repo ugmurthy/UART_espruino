@@ -90,14 +90,14 @@ function chunks2json(d) {
   function show_header() {
       var jsline = ['S.button++','S.button = S.button % 4','console.log(JSON.stringigy(S))'];
    
-      for (let i=0;i<jsline.length; i++) {
-          uart_connection.write(jsline[i]+';\n');
-      }
+          console.log("Show headers");  
+          uart_connection.write('btn=1;\n');
+    
   }
   </script>
    <div class="container-sm text-center">
        <p>
-       <button type="button" class="btn btn-primary" onclick="uart_connection.write('btn=1;\n');">Headers</button>
+       <button type="button" class="btn btn-primary" onclick="show_header();">Headers</button>
        <button type="button" class="btn btn-secondary">Secondary</button>
        <button type="button" class="btn btn-success">Success</button>
        
