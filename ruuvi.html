@@ -92,7 +92,7 @@ function chunks2json(d) {
   }
   function axis(ax) {
        var cmd = "process_command("+ax+");\n";
-       var btnid = ["XYZbtn","Xbtn","Ybtn","Zbtn","XYbtn","XZbtn","YZBtn","Clear"];
+       var btnid = ["XYZbtn","Xbtn","Ybtn","Zbtn","XYbtn","XZbtn","YZbtn","Clear"];
        var red = "btn-danger";
        var green = "btn-success";
        var this_btn_idx = Number(ax);
@@ -102,8 +102,9 @@ function chunks2json(d) {
    
        btn.className = green;       
        if (this_btn_idx < 7) { //process button classes
-          for ( i=0;i<btnid.length;i++) {
-            if (i !=this_btn_idx) {
+          for ( i=0;i<7;i++) {
+            if (i !=this_btn_idx ) {
+              console.log("cmd = ",i)
               btn = document.getElementById(btnid[i]);
               btn.className = red;
             }
@@ -114,7 +115,7 @@ function chunks2json(d) {
   </script>
    <div class="container-sm text-center">
        <p>
-       <button type="button" class="btn btn-primary" onclick="show_header();">Headers</button>
+       <button type="button" class="btn-primary" onclick="show_header();">Headers</button>
        
         
        <button id="XYZbtn" type="button" class="btn btn-success" onclick="axis(0);">3-Axis</button>
@@ -122,7 +123,7 @@ function chunks2json(d) {
        <button id="Ybtn" type="button" class="btn btn-success" onclick="axis(2);">Y-Axis</button>
        <button id="Zbtn" type="button" class="btn btn-success" onclick="axis(3);">Z-Axis</button>
        
-        <button id="XYbtn" type="button" class="btn btn-success" onclick="axis(4);">XY-Axis</button>
+       <button id="XYbtn" type="button" class="btn btn-success" onclick="axis(4);">XY-Axis</button>
        <button id="XZbtn" type="button" class="btn btn-success" onclick="axis(5);">XZ-Axis</button>
        <button id="YZbtn" type="button" class="btn btn-success" onclick="axis(6);">YZ-Axis</button>
        <button id="Clear" type="button" class="btn btn-success" onclick="axis(7);">Clear</button>
