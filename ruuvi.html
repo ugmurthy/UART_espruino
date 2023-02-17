@@ -101,7 +101,7 @@ function chunks2json(d) {
        uart_connection.write(cmd);
    
        btn.className = green;       
-       if (this_btn_idx > 6) { //process button classes
+       if (this_btn_idx < 7) { //process button classes
           for ( i=0;i<btnid.length;i++) {
             if (i !=this_btn_idx) {
               btn = document.getElementById(btnid[i]);
