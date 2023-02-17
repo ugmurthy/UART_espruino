@@ -88,18 +88,37 @@ function chunks2json(d) {
   });
 
   function show_header() {
-      var jsline = ['S.button++','S.button = S.button % 4','console.log(JSON.stringigy(S))'];
-   
-          console.log("Show headers");  
           uart_connection.write("console.log(JSON.stringify(S));\n");
-    
   }
+  function axis(ax) {
+       var cmd = "process_command("+ax+");\n";
+       var bntid = ["XYZbtn","Xbtn","Ybtn","Zbtn"];
+       var red = "btn-danger";
+       var green = "btn-success";
+       var this_btn_idx = Number(ax);
+       var btn = document.getElementById(btnid[this_btn_idx]);
+       
+       uart_connection.write(cmd);
+   
+       btn.className = green;       
+   
+       for ( i=0;i<btnid.length;i++) {
+            if (i !=this_btn_idx) {
+              btn = document.getElementById(btnid[i]);
+              btn.className = red;
+            }
+       } 
+  }
+   
   </script>
    <div class="container-sm text-center">
        <p>
        <button type="button" class="btn btn-primary" onclick="show_header();">Headers</button>
-       <button type="button" class="btn btn-secondary">Secondary</button>
-       <button type="button" class="btn btn-success">Success</button>
+        
+       <button id="XYZbtn" type="button" class="btn btn-success" onclick="axis(0);">3-Axis</button>
+       <button id="Xbtn" type="button" class="btn btn-success" onclick="axis(1);">X-Axis</button>
+       <button id="Ybtn" type="button" class="btn btn-success" onclick="axis(2);">Y-Axis</button>
+       <button id="Zbtn" type="button" class="btn btn-success" onclick="axis(3);">X-Axis</button>
        
   </div>
     <div class = "container-sm text-center">   
