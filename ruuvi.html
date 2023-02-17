@@ -101,12 +101,13 @@ function chunks2json(d) {
        uart_connection.write(cmd);
    
        btn.className = green;       
-   
-       for ( i=0;i<btnid.length;i++) {
+       if (this_btn_idx > 6) { //process button classes
+          for ( i=0;i<btnid.length;i++) {
             if (i !=this_btn_idx) {
               btn = document.getElementById(btnid[i]);
               btn.className = red;
             }
+          } 
        } 
   }
    
@@ -114,11 +115,17 @@ function chunks2json(d) {
    <div class="container-sm text-center">
        <p>
        <button type="button" class="btn btn-primary" onclick="show_header();">Headers</button>
+       
         
        <button id="XYZbtn" type="button" class="btn btn-success" onclick="axis(0);">3-Axis</button>
        <button id="Xbtn" type="button" class="btn btn-success" onclick="axis(1);">X-Axis</button>
        <button id="Ybtn" type="button" class="btn btn-success" onclick="axis(2);">Y-Axis</button>
-       <button id="Zbtn" type="button" class="btn btn-success" onclick="axis(3);">X-Axis</button>
+       <button id="Zbtn" type="button" class="btn btn-success" onclick="axis(3);">Z-Axis</button>
+       
+        <button id="XYbtn" type="button" class="btn btn-success" onclick="axis(4);">XY-Axis</button>
+       <button id="XZbtn" type="button" class="btn btn-success" onclick="axis(5);">XZ-Axis</button>
+       <button id="YZbtn" type="button" class="btn btn-success" onclick="axis(6);">YZ-Axis</button>
+       <button id="Clear" type="button" class="btn btn-success" onclick="axis(7);">Clear</button>
        
   </div>
     <div class = "container-sm text-center">   
