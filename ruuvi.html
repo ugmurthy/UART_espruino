@@ -76,9 +76,10 @@ function chunks2json(d) {
                  S = JSON.parse(record);
                  if (S) { // ensure we have a non empty json
                    if (S.rep_count != undefined) {
-                   document.getElementById("count").innerHTML = S.rep_count; 
+                        document.getElementById("count").innerHTML = S.rep_count; 
+                    }
                    document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                   }
+                   
                  }
                }
           record="";
