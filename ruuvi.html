@@ -103,8 +103,9 @@ function chunks2json(d) {
        
        uart_connection.write(cmd);
    
-       btn.className = green;       
+          
        if (this_btn_idx < 7) { //process button classes
+          btn.className = green;   
           for ( i=0;i<7;i++) {
             if (i !=this_btn_idx ) {
               console.log("cmd = ",i)
@@ -116,6 +117,7 @@ function chunks2json(d) {
        // exception processing 
        // toggle text if ax = 8
        if (this_btn_idx == 8) {
+           console.log(btn.value);
            if (btn.value == "Raw Data") {
              btn.value = "Normal Data";
            } else { 
