@@ -75,8 +75,10 @@ function chunks2json(d) {
                if (record) { // ensure non empty record
                  S = JSON.parse(record);
                  if (S) { // ensure we have a non empty json
+                   if (S.rep_count != undefined) {
                    document.getElementById("count").innerHTML = S.rep_count; 
                    document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                   }
                  }
                }
           record="";
@@ -92,7 +94,7 @@ function chunks2json(d) {
   }
   function axis(ax) {
        var cmd = "process_command("+ax+");\n";
-       var btnid = ["XYZbtn","Xbtn","Ybtn","Zbtn","XYbtn","XZbtn","YZbtn","Clear"];
+       var btnid = ["XYZbtn","Xbtn","Ybtn","Zbtn","XYbtn","XZbtn","YZbtn","Clear","Raw"];
        var red = "btn-danger";
        var green = "btn-success";
        var this_btn_idx = Number(ax);
@@ -109,7 +111,16 @@ function chunks2json(d) {
               btn.className = red;
             }
           } 
-       } 
+       }
+       // exception processing 
+       // toggle text if ax = 8
+       if (this_btn_idx == 8) {
+           if (btn.value == "Raw Data") {
+             btn.value = "Normal Data";
+           } else { 
+             btn.value = "Raw Data";
+           }
+       }
   }
    
   </script>
@@ -128,7 +139,7 @@ function chunks2json(d) {
        <button id="YZbtn" type="button" class="btn-danger" onclick="axis(6);">YZ-Axis</button>
        <button type="button" class="btn-primary" onclick="show_header();">Headers</button>
        <button id="Clear" type="button" class="btn-primary" onclick="axis(7);">Clear</button>
-       <button id="Clear" type="button" class="btn-primary" onclick="axis(8);">Raw</button>
+       <button id="Raw" type="button" class="btn-primary" onclick="axis(8);">Raw Data</button>
   </div>
     <div class = "container-sm text-center">   
     <p>
