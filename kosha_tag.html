@@ -50,13 +50,12 @@
 var record = ""
 var OUT=true;
 var uart_connection=undefined;
-// previous rep count for plotting
-var prev_rep_count = 0;    
+   
 // smoothie related vars
 var smoothie = new SmoothieChart();
 var plotarea = document.getElementById("plotarea");
 // delay plotting by a 1000 ms
-smoothie.streamTo(plotarea, 100);
+smoothie.streamTo(plotarea, 1000);
 var line1 = new TimeSeries();
 var line2 = new TimeSeries();
 var line3 = new TimeSeries();
@@ -159,15 +158,12 @@ function chunks2json(d) {
                     // optional
                     //document.getElementById("result").innerHTML = JSON.stringify(data);
                     // important to add current date to time in millis
-                    tick = tick + 10;
+                    tick = tick + 100;
                     line1.append(tick , data.x);
                     line2.append(tick , data.y);
                     line3.append(tick , data.z);
                     break;
-                case 'N':
-                   tick = tick +1000;
-                   let rc = data.rep_cout - prev_rep_count;
-                   line1.append(tick, rc);
+                
               
                 default:
                     console.error(
@@ -204,8 +200,10 @@ function chunks2json(d) {
            console.log(btn.value);
            if (btn.textContent == "Raw Data") {
              btn.textContent = "Normal Data";
+             plotarea.style.visibility="visible";
            } else { 
              btn.textContent = "Raw Data";
+             plotarea.style.visibility="hidden";
              
            }
        }
