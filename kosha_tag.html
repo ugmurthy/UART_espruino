@@ -64,9 +64,9 @@ var line3 = new TimeSeries();
 smoothie.addTimeSeries(line1,
     { strokeStyle: 'rgb(255, 0, 0)', lineWidth: 2 });
 smoothie.addTimeSeries(line2,
-    { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 1 });
+    { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 2 });
 smoothie.addTimeSeries(line3,
-    { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 1 });
+    { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 2 });
 
 var tick = new Date().getTime();  
 
@@ -152,7 +152,7 @@ function chunks2json(d) {
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
   function process_raw(data) {
-            console.log("Data: ", data);
+            //console.log("Data: ", data);
             switch (data.type) {
                 case 'R':
                     // optional
@@ -200,10 +200,10 @@ function chunks2json(d) {
            console.log(btn.value);
            if (btn.textContent == "Raw Data") {
              btn.textContent = "Normal Data";
-             plotarea.style.visibility="visible";
+             plotarea.className="";
            } else { 
              btn.textContent = "Raw Data";
-             plotarea.style.visibility="hidden";
+             plotarea.className="collapse in";
              
            }
        }
