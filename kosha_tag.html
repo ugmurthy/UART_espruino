@@ -11,11 +11,31 @@
  </head>
  <body>
   <script src="https://www.espruino.com/js/uart.js"></script>
+  <script type="text/javascript" src="smoothie.js"></script>
   <script>
   
 var record = ""
 var OUT=true;
 var uart_connection=undefined;
+// smoothie related vars
+    var smoothie = new SmoothieChart();
+    var smoothie = new SmoothieChart();
+    // delay plotting by a 1000 ms
+    smoothie.streamTo(document.getElementById("plotarea"), 1000);
+    var line1 = new TimeSeries();
+    var line2 = new TimeSeries();
+    var line3 = new TimeSeries();
+
+    // Add to SmoothieChart
+    smoothie.addTimeSeries(line1,
+        { strokeStyle: 'rgb(255, 0, 0)', lineWidth: 1 });
+    smoothie.addTimeSeries(line2,
+        { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 1 });
+    smoothie.addTimeSeries(line3,
+        { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 1 });
+
+    var tick = new Date().getTime();  
+   
 function chunks2json(d) {
     const END="}";
     const START="{"
@@ -25,6 +45,7 @@ function chunks2json(d) {
     idx_start = d.search(START);
     idx_end = d.search(END);
 
+      
     //console.log("proc ", OUT, idx_start, idx_end, d);
     switch (OUT) {
         case true:
@@ -75,8 +96,15 @@ function chunks2json(d) {
                if (record) { // ensure non empty record
                  S = JSON.parse(record);
                  if (S) { // ensure we have a non empty json
-                   if (S.rep_count != undefined) {
+                   if (S.type == "N") { // normal data
+            
                         document.getElementById("count").innerHTML = S.rep_count; 
+                    } else {
+                    if (S.type == "R") { // plot & show raw data
+                        // plot it
+                        process_raw(S);        
+                    }
+                    
                     }
                    document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                    
@@ -89,7 +117,23 @@ function chunks2json(d) {
     connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log("Wrote : ",d)});
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
-
+  function process_raw(data) {
+            console.log("Data: ", data);
+            switch (data.type) {
+                case 'R':
+                    // optional
+                    //document.getElementById("result").innerHTML = JSON.stringify(data);
+                    // important to add current date to time in millis
+                    tick = tick + 100;
+                    line1.append(tick , data.x);
+                    line2.append(tick , data.y);
+                    line3.append(tick , data.z);
+                    break;
+                default:
+                    console.error(
+                        "unsupported data type", data);
+            }
+    };
   function show_header() {
           uart_connection.write("console.log(JSON.stringify(S));\n");
   }
@@ -145,9 +189,12 @@ function chunks2json(d) {
        <button id="Raw" type="button" class="btn-primary" onclick="axis(8);">Raw Data</button>
   </div>
     <div class = "container-sm text-center">   
-    <p>
+       <p>
            <span id="status"></span>
        <p>
+       <div> 
+        <canvas id="plotarea" width="600" height="200"> </canvas>
+     </div>
        <span id="count" style="color:blue;font-size:600%"></span>
        <hr>
        <div id="result" ></div>
