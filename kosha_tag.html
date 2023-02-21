@@ -50,25 +50,27 @@
 var record = ""
 var OUT=true;
 var uart_connection=undefined;
+// previous rep count for plotting
+var prev_rep_count = 0;    
 // smoothie related vars
-    var smoothie = new SmoothieChart();
-    
-    // delay plotting by a 1000 ms
-    smoothie.streamTo(document.getElementById("plotarea"), 1000);
-    var line1 = new TimeSeries();
-    var line2 = new TimeSeries();
-    var line3 = new TimeSeries();
+var smoothie = new SmoothieChart();
+var plotarea = document.getElementById("plotarea");
+// delay plotting by a 1000 ms
+smoothie.streamTo(plotarea, 100);
+var line1 = new TimeSeries();
+var line2 = new TimeSeries();
+var line3 = new TimeSeries();
 
-    // Add to SmoothieChart
-    smoothie.addTimeSeries(line1,
-        { strokeStyle: 'rgb(255, 0, 0)', lineWidth: 1 });
-    smoothie.addTimeSeries(line2,
-        { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 1 });
-    smoothie.addTimeSeries(line3,
-        { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 1 });
+// Add to SmoothieChart
+smoothie.addTimeSeries(line1,
+    { strokeStyle: 'rgb(255, 0, 0)', lineWidth: 2 });
+smoothie.addTimeSeries(line2,
+    { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 1 });
+smoothie.addTimeSeries(line3,
+    { strokeStyle: 'rgb(0, 255, 0)', lineWidth: 1 });
 
-    var tick = new Date().getTime();  
-   
+var tick = new Date().getTime();  
+
 function chunks2json(d) {
     const END="}";
     const START="{"
@@ -130,7 +132,7 @@ function chunks2json(d) {
                  S = JSON.parse(record);
                  if (S) { // ensure we have a non empty json
                    if (S.type == "N") { // normal data
-            
+                        process_raw(S);
                         document.getElementById("count").innerHTML = S.rep_count; 
                     } else {
                     if (S.type == "R") { // plot & show raw data
@@ -157,11 +159,16 @@ function chunks2json(d) {
                     // optional
                     //document.getElementById("result").innerHTML = JSON.stringify(data);
                     // important to add current date to time in millis
-                    tick = tick + 100;
+                    tick = tick + 10;
                     line1.append(tick , data.x);
                     line2.append(tick , data.y);
                     line3.append(tick , data.z);
                     break;
+                case 'N':
+                   tick = tick +1000;
+                   let rc = data.rep_cout - prev_rep_count;
+                   line1.append(tick, rc);
+              
                 default:
                     console.error(
                         "unsupported data type", data);
@@ -199,6 +206,7 @@ function chunks2json(d) {
              btn.textContent = "Normal Data";
            } else { 
              btn.textContent = "Raw Data";
+             
            }
        }
   }
