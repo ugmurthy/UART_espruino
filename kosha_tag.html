@@ -136,17 +136,12 @@ function chunks2json(d) {
                  S = JSON.parse(record);
                  if (S) { // ensure we have a non empty json
                    if (S.type == "N") { // normal data
-                        process_raw(S);
                         document.getElementById("count").innerHTML = S.rep_count; 
-                    } else {
-                    if (S.type == "R") { // plot & show raw data
-                        // plot it
+                    }
+                   if (S.type == "R") { // plot & show raw data
                         process_raw(S);        
                     }
-                    
-                    }
-                   document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                   
+                  document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                  }
                }
           record="";
