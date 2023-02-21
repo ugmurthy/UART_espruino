@@ -37,7 +37,7 @@
            <span id="status"></span>
        <p>
        <div> 
-        <canvas id="plotarea" width="900" height="400"> </canvas>
+        <canvas id="plotarea" width="900" height="300"> </canvas>
      </div>
        <span id="count" style="color:blue;font-size:600%"></span>
        <hr>
@@ -53,10 +53,10 @@ var uart_connection=undefined;
    
 // smoothie related vars
 //var smoothie = new SmoothieChart();
-var smoothie = new SmoothieChart({maxValueScale:1.0,
+var smoothie = new SmoothieChart({millisPerPixel:20,maxValueScale:1.0,
                                minValueScale:1.0,
-                               grid:{fillStyle:'rgba(171,190,191,0.35)',strokeStyle:'#090101',verticalSections:10},
-                               labels:{fontSize:10,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
+                               grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
+                               labels:{fillStyle:#000000,fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
                                maxValue:1000,minValue:-1000});
 var plotarea = document.getElementById("plotarea");
 // delay plotting by a 1000 ms
