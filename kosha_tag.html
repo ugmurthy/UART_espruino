@@ -155,7 +155,7 @@ function chunks2json(d) {
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
   function process_raw(data) {
-            //console.log("Data: ", data);
+            console.log("Data: ", data);
             switch (data.type) {
                 case 'R':
                     // optional
