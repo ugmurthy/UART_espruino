@@ -69,9 +69,12 @@ var smoothie = new SmoothieChart({millisPerPixel:100,maxValueScale:1.0,
 var plotarea = document.getElementById("plotarea");
 var count = document.getElementById("count");
 var result = document.getElementById("result");
-    
+
+    // show items flags
+show_normal = false; // show normal data
+
 // delay plotting by a 1000 ms
-smoothie.streamTo(plotarea, 0);
+smoothie.streamTo(plotarea, 500);
 var line1 = new TimeSeries();
 /*
 var line2 = new TimeSeries();
@@ -165,7 +168,9 @@ function chunks2json(d) {
                    if (S.type == "N") { // normal data
                         process_raw(S);
                         count.innerHTML = S.rep_count; 
+                        if (show_normal) {
                         result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                        }
                     }
                    if (S.type == "R") { // plot & show raw data
                        // process_raw(S);        
