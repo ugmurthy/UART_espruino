@@ -97,7 +97,7 @@ function chunks2json(d) {
             }
             if (idx_start > -1 && idx_end > 0) {
                 OUT = false;
-                console.log(OUT);
+                //console.log(OUT);
                 res = d.substring(idx_start, idx_end+1);
             }
             if (idx_start > -1) {
@@ -151,7 +151,7 @@ function chunks2json(d) {
           OUT=true;
           } //endif (OUT)
     });
-    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log(S)});
+    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log("Requested Header from device")});
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
   function process_raw(data) {
@@ -192,7 +192,7 @@ function chunks2json(d) {
           btn.className = green;   
           for ( i=0;i<7;i++) {
             if (i !=this_btn_idx ) {
-              console.log("cmd = ",i)
+              //console.log("cmd = ",i)
               btn = document.getElementById(btnid[i]);
               btn.className = red;
             }
@@ -201,7 +201,7 @@ function chunks2json(d) {
        // exception processing 
        // toggle text if ax = 8
        if (this_btn_idx == 8) {
-           console.log(btn.value);
+           //console.log(btn.value);
            if (btn.textContent == "Raw Data") {
              btn.textContent = "Normal Data";
              plotarea.className="";
