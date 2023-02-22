@@ -64,7 +64,7 @@ var smoothie = new SmoothieChart({millisPerPixel:100,maxValueScale:1.0,
                                minValueScale:1.0,
                                grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
                                labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
-                               maxValue:1000,minValue:0});
+                               maxValue:500,minValue:0});
 // areas of interest
 var plotarea = document.getElementById("plotarea");
 var count = document.getElementById("count");
@@ -76,8 +76,8 @@ var line1 = new TimeSeries();
 /*
 var line2 = new TimeSeries();
 var line3 = new TimeSeries();
-var line4 = new TimeSeries();
-*/    
+*/
+var line4 = new TimeSeries();    
 // Add to SmoothieChart
 smoothie.addTimeSeries(line1,
     { strokeStyle: 'rgb(255,0, 0)', lineWidth: 2 });
@@ -86,9 +86,10 @@ smoothie.addTimeSeries(line2,
     { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 2 });
 smoothie.addTimeSeries(line3,
     { strokeStyle: '#0b6704', lineWidth: 2 });
+*/
 smoothie.addTimeSeries(line4, 
                        { strokeStyle: '#000000',lineWidth:3});
-*/
+
     
 var tick = new Date().getTime();  
 var prev_rep_count = 0;
@@ -194,7 +195,8 @@ function chunks2json(d) {
              case 'N':
                     tick = tick + 1000;
                     console.log(tick, data.rep_count, prev_rep_count );
-                    line1.append(tick,data.rep_count - prev_rep_count);
+                    line1.append(tick,(data.rep_count - prev_rep_count)*100);
+                    line4.append(tick,data.magnitude);
                     prev_rep_count = data.rep_count;
                     break;
                 default:
