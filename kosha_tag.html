@@ -58,7 +58,11 @@ var smoothie = new SmoothieChart({millisPerPixel:20,maxValueScale:1.0,
                                grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
                                labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
                                maxValue:1000,minValue:-1000});
+// areas of interest
 var plotarea = document.getElementById("plotarea");
+var count = document.getElementById("count");
+var result = document.getElementById("result");
+    
 // delay plotting by a 1000 ms
 smoothie.streamTo(plotarea, 1000);
 var line1 = new TimeSeries();
@@ -139,8 +143,8 @@ function chunks2json(d) {
                  S = JSON.parse(record);
                  if (S) { // ensure we have a non empty json
                    if (S.type == "N") { // normal data
-                        document.getElementById("count").innerHTML = S.rep_count; 
-                        document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                        count.innerHTML = S.rep_count; 
+                        result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                     }
                    if (S.type == "R") { // plot & show raw data
                         process_raw(S);        
@@ -155,16 +159,16 @@ function chunks2json(d) {
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
   function process_raw(data) {
-            console.log("Data: ", data);
+            //console.log("Data: ", data);
             switch (data.type) {
                 case 'R':
                     // optional
                     //document.getElementById("result").innerHTML = JSON.stringify(data);
                     // important to add current date to time in millis
                     tick = tick + 100;
-                    line1.append(tick , data.x);
-                    line2.append(tick , data.y);
-                    line3.append(tick , data.z);
+                    //line1.append(tick , data.x);
+                    //line2.append(tick , data.y);
+                    //line3.append(tick , data.z);
                     line4.append(tick , data.g);
                     break;
                 
@@ -204,6 +208,7 @@ function chunks2json(d) {
            //console.log(btn.value);
            if (btn.textContent == "Raw Data") {
              btn.textContent = "Normal Data";
+            
              plotarea.className="";
            } else { 
              btn.textContent = "Raw Data";
