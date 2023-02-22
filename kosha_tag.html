@@ -196,9 +196,9 @@ function chunks2json(d) {
                     console.log(tick, data.rep_count, prev_rep_count );
                     line1.append(tick,data.rep_count - prev_rep_count);
                     prev_rep_count = data.rep_count;
+                    break;
                 default:
-                    console.error(
-                        "unsupported data type", data);
+                    console.error('{"error":"chunks2json-unsupported data type"');
             }
     };
   function show_header() {
