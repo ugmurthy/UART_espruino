@@ -72,9 +72,11 @@ smoothie.addTimeSeries(line2,
     { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 2 });
 smoothie.addTimeSeries(line3,
     { strokeStyle: '#0b6704', lineWidth: 2 });
+smoothie.addTimeSeries(line4, 
+                       { strokeStyle: '#000000',lineWidth=3});
 
-var tick = new Date().getTime();  
-
+//var tick = new Date().getTime();  
+var tick = 1000;
 function chunks2json(d) {
     const END="}";
     const START="{"
@@ -137,18 +139,18 @@ function chunks2json(d) {
                  if (S) { // ensure we have a non empty json
                    if (S.type == "N") { // normal data
                         document.getElementById("count").innerHTML = S.rep_count; 
+                        document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                     }
                    if (S.type == "R") { // plot & show raw data
                         process_raw(S);        
-                    }
-                  document.getElementById("result").innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                 }
-               }
+                    }    
+                 } //endif (S)
+               } // endif (record)
           record="";
           OUT=true;
-          }
+          } //endif (OUT)
     });
-    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log("Wrote : ",d)});
+    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log(S)});
     connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
   });
   function process_raw(data) {
@@ -162,6 +164,7 @@ function chunks2json(d) {
                     line1.append(tick , data.x);
                     line2.append(tick , data.y);
                     line3.append(tick , data.z);
+                    line4.append(tick , data.g);
                     break;
                 
               
