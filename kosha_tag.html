@@ -79,20 +79,16 @@ show_raw = false; // show raw data
 // delay plotting by a 500 ms
 smoothie.streamTo(plotarea, 500);
 var line1 = new TimeSeries();
-/*
 var line2 = new TimeSeries();
 var line3 = new TimeSeries();
-*/
 var line4 = new TimeSeries();    
 // Add to SmoothieChart
 smoothie.addTimeSeries(line1,
     { strokeStyle: 'rgb(255,0, 0)',interpolation:'step', lineWidth: 2 });
-/*
 smoothie.addTimeSeries(line2,
     { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 2 });
 smoothie.addTimeSeries(line3,
     { strokeStyle: '#0b6704', lineWidth: 2 });
-*/
 smoothie.addTimeSeries(line4, 
                        { strokeStyle: '#000000',interpolation:'step',lineWidth:3});
 
@@ -213,7 +209,7 @@ function chunks2json(d) {
                     //line1.append(tick , data.x);
                     //line2.append(tick , data.y);
                     //line3.append(tick , data.z);
-                    line4.append(tick , data.g);
+                    line2.append(tick , data.g);
                     break;
              case 'N':
                     tick = tick + 1000;
