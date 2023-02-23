@@ -168,7 +168,9 @@ function chunks2json(d) {
     connection.on('data', function(d) { 
           var balance = "";
           var part_rec="";
-          [part_rec, balance] = chunks2json(balance+d)
+          console.log(OUT, part_rec," | ", balance," | ", d," | ");
+          [part_rec, balance] = chunks2json(balance+d);
+          console.log("\t"+record);
           record = record + part_rec;
           if (OUT) {
               var S = {};
