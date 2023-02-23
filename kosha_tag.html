@@ -114,17 +114,23 @@ function chunks2json(d) {
         case true:
             //console.log("Case :",OUT);
             if (idx_start == -1) {
-                res = ""
+                res = "";
+                balance = "";
+                break;
             }
+
             if (idx_start > -1 && idx_end > 0) {
                 OUT = false;
-                console.log(OUT);
+                //console.log(OUT);
                 res = d.substring(idx_start, idx_end + 1);
                 balance = d.substring(idx_end + 1);
+                break;
             }
             if (idx_start > -1 && idx_end == -1) {
                 OUT = false;
                 res = d.substring(idx_start);
+                balance = ""
+                break;
             }
             break;
 
@@ -134,17 +140,21 @@ function chunks2json(d) {
             if (idx_end == -1) {
                 OUT = false;
                 res = d;
+                break;
             }
             if (idx_end > -1) {
                 OUT = true;
                 res = d.substring(0, idx_end + 1);
                 balance = d.substring(idx_end + 1);
+                break;
             }
             break
     }
     //console.log("proc returns ", res);
     return [res, balance];
 }
+
+
 
 // chunks2json end
    
@@ -173,7 +183,7 @@ function chunks2json(d) {
                         }
                     }
                    if (S.type == "R") { // plot & show raw data
-                       // process_raw(S);        
+                        process_raw(S);        
                     }    
                  } //endif (S)
                } // endif (record)
@@ -192,10 +202,10 @@ function chunks2json(d) {
                     //document.getElementById("result").innerHTML = JSON.stringify(data);
                     // important to add current date to time in millis
                     tick = tick + 100;
-                    line1.append(tick , data.x);
+                    //line1.append(tick , data.x);
                     //line2.append(tick , data.y);
                     //line3.append(tick , data.z);
-                    //line4.append(tick , data.g);
+                    line4.append(tick , data.g);
                     break;
              case 'N':
                     tick = tick + 1000;
@@ -248,7 +258,7 @@ function chunks2json(d) {
              plotarea.className="";
            } else { 
              btn.textContent = "Raw Data";
-             plotarea.className="collapse in";
+             //plotarea.className="collapse in";
              
            }
        }
