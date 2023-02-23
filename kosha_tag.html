@@ -200,7 +200,7 @@ function chunks2json(d) {
              case 'N':
                     tick = tick + 1000;
                     console.log(tick, data.rep_count, prev_rep_count );
-                    line1.append(tick,(data.rep_count - prev_rep_count)*100);
+                    line1.append(tick,(data.rep_count - prev_rep_count)*100 + 50); // bias 0 with 50 and multiply any rep > 0 with 100
                     line4.append(tick,data.magnitude);
                     prev_rep_count = data.rep_count;
                     break;
@@ -219,6 +219,7 @@ function chunks2json(d) {
        var this_btn_idx = Number(ax);
        var btn = document.getElementById(btnid[this_btn_idx]);
        
+       // do as per cmd on the device
        uart_connection.write(cmd);
    
           
@@ -233,6 +234,11 @@ function chunks2json(d) {
           } 
        }
        // exception processing 
+       // clear : prev_rep_count   
+       if (this_btn_idx == 7) {
+           prev_rep_count = 0
+       }
+   
        // toggle text if ax = 8
        if (this_btn_idx == 8) {
            //console.log(btn.value);
