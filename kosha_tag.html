@@ -62,7 +62,7 @@ var smoothie = new SmoothieChart({millisPerPixel:20,maxValueScale:1.0,
                                labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
                                maxValue:1000,minValue:-1000});
 */
-var smoothie = new SmoothieChart({millisPerPixel:100,maxValueScale:1.0,
+var smoothie = new SmoothieChart({millisPerPixel:200,maxValueScale:1.0,
                                minValueScale:1.0,
                                grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
                                labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
@@ -74,8 +74,9 @@ var result = document.getElementById("result");
 
     // show items flags
 show_normal = false; // show normal data
-
-// delay plotting by a 1000 ms
+show_raw = false; // show raw data
+    
+// delay plotting by a 500 ms
 smoothie.streamTo(plotarea, 500);
 var line1 = new TimeSeries();
 /*
@@ -168,14 +169,12 @@ function chunks2json(d) {
    
     document.getElementById("status").innerHTML = "Connected";
     connection.on('data', function(d) { 
-          //var balance = "";
-          //var part_rec="";
-          console.log("Before: ",OUT, part_rec," | ", balance," | ", d," | ");
-          console.log("\tRecord: ",record);
+          //console.log("Before: ",OUT, part_rec," | ", balance," | ", d," | ");
+          //console.log("\tRecord: ",record);
           [part_rec, balance] = chunks2json(balance+d);
-          console.log("After : ",OUT, part_rec," | ", balance," | ");
+          //console.log("After : ",OUT, part_rec," | ", balance," | ");
           record = record + part_rec;
-          console.log("\tRecord: "+record);
+          //console.log("\tRecord: "+record);
           if (OUT) {
               var S = {};
                if (record) { // ensure non empty record
@@ -189,7 +188,9 @@ function chunks2json(d) {
                         }
                     }
                    if (S.type == "R") { // plot & show raw data
-                        result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                        if (show_raw) {
+                           result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                        }
                         process_raw(S);        
                     }    
                  } //endif (S)
