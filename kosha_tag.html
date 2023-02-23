@@ -228,10 +228,6 @@ function chunks2json(d) {
        var green = "btn-success";
        var this_btn_idx = Number(ax);
        var btn = document.getElementById(btnid[this_btn_idx]);
-       
-       // do as per cmd on the device
-       uart_connection.write(cmd);
-   
           
        if (this_btn_idx < 7) { //process button classes
           btn.className = green;   
@@ -254,7 +250,7 @@ function chunks2json(d) {
            //console.log(btn.value);
            if (btn.textContent == "Raw Data") {
              btn.textContent = "Normal Data";
-            
+             
              plotarea.className="";
            } else { 
              btn.textContent = "Raw Data";
@@ -262,6 +258,11 @@ function chunks2json(d) {
              
            }
        }
+   // do as per cmd on the device
+   record="";
+   OUT=true;
+   uart_connection.write(cmd);
+   
   }
    
   </script>
