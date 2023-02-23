@@ -184,7 +184,7 @@ function chunks2json(d) {
                    if (S.type == "N") { // normal data
                         process_raw(S);
                         count.innerHTML = S.rep_count; 
-                        duration.innterHTML = "Active time(s) : " + S.active + "Idle time(s) : " + S.idle;
+                        duration.innerHTML = "Active time(s) : " + S.active + "Idle time(s) : " + S.idle;
                         if (show_normal) {
                         result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                         }
@@ -198,7 +198,7 @@ function chunks2json(d) {
                    if (S.type == "H") {
                        H = S;
                        result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                       setting.innertHTML = "Battery : " + Math.round(S.battery*100)/100;
+                       setting.innerHTML = "Battery : " + Math.round(S.battery*100)/100;
                     
                    }
                  } //endif (S)
