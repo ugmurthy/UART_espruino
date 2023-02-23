@@ -39,7 +39,9 @@
        <div> 
         <canvas id="plotarea" width="900" height="300"> </canvas>
      </div>
-       <span id="count" style="color:blue;font-size:600%"></span>
+       <div id="count" style="color:blue;font-size:600%"></div><br>
+     <div id="duration" style="color:blue"></div><br>
+     <div id="setting" style="color:green"></div>
        <hr>
        <div id="result" ></div>
        <hr>
@@ -71,7 +73,9 @@ var smoothie = new SmoothieChart({millisPerPixel:100,maxValueScale:1.0,
 var plotarea = document.getElementById("plotarea");
 var count = document.getElementById("count");
 var result = document.getElementById("result");
-
+var duration = document.getElementById("duration");
+var setting = document.getElementById("setting");
+    
     // show items flags
 show_normal = false; // show normal data
 show_raw = false; // show raw data
@@ -180,6 +184,7 @@ function chunks2json(d) {
                    if (S.type == "N") { // normal data
                         process_raw(S);
                         count.innerHTML = S.rep_count; 
+                        duration.innterHTML = "Active time(s) : "+S.active +"  Idle time(s) : "+S.idle";
                         if (show_normal) {
                         result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                         }
@@ -193,6 +198,8 @@ function chunks2json(d) {
                    if (S.type == "H") {
                        H = S;
                        result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
+                       setting.innertHTML = "Battery : " + Math.round(S.battery*100)/100
+                    
                    }
                  } //endif (S)
                } // endif (record)
