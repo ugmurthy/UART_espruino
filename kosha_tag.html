@@ -187,6 +187,7 @@ function chunks2json(d) {
                         }
                     }
                    if (S.type == "R") { // plot & show raw data
+                        result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
                         process_raw(S);        
                     }    
                  } //endif (S)
