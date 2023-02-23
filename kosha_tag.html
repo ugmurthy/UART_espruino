@@ -171,8 +171,8 @@ function chunks2json(d) {
           console.log("Before: ",OUT, part_rec," | ", balance," | ", d," | ");
           [part_rec, balance] = chunks2json(balance+d);
           console.log("After : ",OUT, part_rec," | ", balance," | ");
-          console.log("\t"+record);
           record = record + part_rec;
+          console.log("\t"+record);
           if (OUT) {
               var S = {};
                if (record) { // ensure non empty record
