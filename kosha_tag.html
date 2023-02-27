@@ -1,296 +1,330 @@
-
 <!doctype html>
 <html lang="en">
- <head>
-  <meta charset="utf-8">
+
+<head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
- </head>
- <body>
-  <script type="text/javascript" src="./smoothie.js"></script>
-  <script src="https://www.espruino.com/js/uart.js"></script>
- 
- 
+</head>
 
-   <div class="container-sm text-center">
-       <p>
-       
-       
-        
-       <button id="XYZbtn" type="button" class="btn-success" onclick="axis(0);">3-Axis</button>
-       <button id="Xbtn" type="button" class="btn-success" onclick="axis(1);">X-Axis</button>
-       <button id="Ybtn" type="button" class="btn-success" onclick="axis(2);">Y-Axis</button>
-       <button id="Zbtn" type="button" class="btn-success" onclick="axis(3);">Z-Axis</button>
-       
-       <button id="XYbtn" type="button" class="btn-danger" onclick="axis(4);">XY-Axis</button>
-       <button id="XZbtn" type="button" class="btn-danger" onclick="axis(5);">XZ-Axis</button>
-       <button id="YZbtn" type="button" class="btn-danger" onclick="axis(6);">YZ-Axis</button>
-       <button type="button" class="btn-primary" onclick="show_header();">Headers</button>
-       <button id="Clear" type="button" class="btn-primary" onclick="axis(7);">Clear</button>
-       <button id="Raw" type="button" class="btn-primary" onclick="axis(8);">Raw Data</button>
-  </div>
-    <div class = "container-sm text-center">   
-       <p>
-           <span id="status"></span>
-       <p>
-       <div> 
-        <canvas id="plotarea" width="900" height="300"> </canvas>
-     </div>
-       <div id="count" style="color:blue;font-size:600%"></div>
-     <div id="duration" style="color:blue"></div>
-     <div id="setting" style="color:green"></div>
-       <hr>
-       <div id="result" ></div>
-       <hr>
-       <p>
-       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-   <script>
-  
-var record = "";
-var balance = "";
-var part_rec="";
-var OUT=true;
-var uart_connection=undefined;
-   
-// smoothie related vars
-//var smoothie = new SmoothieChart();
-/*
-var smoothie = new SmoothieChart({millisPerPixel:20,maxValueScale:1.0,
-                               minValueScale:1.0,
-                               grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
-                               labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
-                               maxValue:1000,minValue:-1000});
-*/
-var smoothie = new SmoothieChart({millisPerPixel:100,maxValueScale:1.0,
-                               minValueScale:1.0,
-                               grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
-                               labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
-                               maxValue:500,minValue:0});
-// areas of interest
-var plotarea = document.getElementById("plotarea");
-var count = document.getElementById("count");
-var result = document.getElementById("result");
-var duration = document.getElementById("duration");
-var setting = document.getElementById("setting");
-    
-    // show items flags
-show_normal = false; // show normal data
-show_raw = false; // show raw data
-    // header dict
-   var H = {};
-// delay plotting by a 500 ms
-smoothie.streamTo(plotarea, 500);
-var line1 = new TimeSeries();
-var line2 = new TimeSeries();
-var line3 = new TimeSeries();
-var line4 = new TimeSeries();    
-// Add to SmoothieChart
-smoothie.addTimeSeries(line1,
-    { strokeStyle: 'rgb(255,0, 0)',interpolation:'step', lineWidth: 2 });
-smoothie.addTimeSeries(line2,
-    { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 2 });
-smoothie.addTimeSeries(line3,
-    { strokeStyle: '#0b6704', lineWidth: 2 });
-smoothie.addTimeSeries(line4, 
-                       { strokeStyle: '#000000',interpolation:'step',lineWidth:3});
-
-    
-var tick = new Date().getTime();  
-var prev_rep_count = 0;
-// int to time
-function secondsToHms(d) {
-    d = Number(d);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
-
-    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
-    return hDisplay + mDisplay + sDisplay; 
-}
-    
-// chunks2json
-function chunks2json(d) {
-    const END = "}";
-    const START = "{"
-    var idx_start;
-    var idx_end;
-    var res = "";
-    var balance = "";
-    idx_start = d.search(START);
-    idx_end = d.search(END);
-
-    //console.log("proc ", OUT, idx_start, idx_end, d);
-    switch (OUT) {
-        case true:
-            //console.log("Case :",OUT);
-            if (idx_start == -1) {
-                res = "";
-                balance = "";
-                break;
-            }
-
-            if (idx_start > -1 && idx_end > 0) {
-                OUT = false;
-                //console.log(OUT);
-                res = d.substring(idx_start, idx_end + 1);
-                balance = d.substring(idx_end + 1);
-                break;
-            }
-            if (idx_start > -1 && idx_end == -1) {
-                OUT = false;
-                res = d.substring(idx_start);
-                balance = ""
-                break;
-            }
-            break;
-
-        case false:
-            //console.log("Case :",OUT);
-
-            if (idx_end == -1) {
-                OUT = false;
-                res = d;
-                break;
-            }
-            if (idx_end > -1) {
-                OUT = true;
-                res = d.substring(0, idx_end + 1);
-                balance = d.substring(idx_end + 1);
-                break;
-            }
-            break
-    }
-    //console.log("proc returns ", res);
-    return [res, balance];
-}
+<body>
+    <script type="text/javascript" src="./smoothie.js"></script>
+    <script src="https://www.espruino.com/js/uart.js"></script>
 
 
 
-// chunks2json end
-   
-  UART.connect(function(connection) {
-    
-    if (!connection) throw "Error!";
-   
-   uart_connection = connection;
-   
-    document.getElementById("status").innerHTML = "Connected";
-    connection.on('data', function(d) { 
-          //console.log("Before: ",OUT, part_rec," | ", balance," | ", d," | ");
-          //console.log("\tRecord: ",record);
-          [part_rec, balance] = chunks2json(balance+d);
-          //console.log("After : ",OUT, part_rec," | ", balance," | ");
-          record = record + part_rec;
-          //console.log("\tRecord: "+record);
-          if (OUT) {
-              var S = {};
-               if (record) { // ensure non empty record
-                 S = JSON.parse(record);
-                 if (S) { // ensure we have a non empty json
-                   if (S.type == "N") { // normal data
-                        process_raw(S);
-                        count.innerHTML = S.rep_count; 
-                        duration.innerHTML = "Active: " + secondsToHms(S.active) + "\tIdle: " + secondsToHms(S.idle);
-                        if (show_normal) {
-                        result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                        }
+    <div class="container-sm text-center">
+        <p>
+
+
+
+            <button id="XYZbtn" type="button" class="btn-success" onclick="axis(0);">3-Axis</button>
+            <button id="Xbtn" type="button" class="btn-success" onclick="axis(1);">X-Axis</button>
+            <button id="Ybtn" type="button" class="btn-success" onclick="axis(2);">Y-Axis</button>
+            <button id="Zbtn" type="button" class="btn-success" onclick="axis(3);">Z-Axis</button>
+
+            <button id="XYbtn" type="button" class="btn-danger" onclick="axis(4);">XY-Axis</button>
+            <button id="XZbtn" type="button" class="btn-danger" onclick="axis(5);">XZ-Axis</button>
+            <button id="YZbtn" type="button" class="btn-danger" onclick="axis(6);">YZ-Axis</button>
+            <button type="button" class="btn-primary" onclick="show_header();">Headers</button>
+            <button id="Clear" type="button" class="btn-primary" onclick="axis(7);">Clear</button>
+            <button id="Raw" type="button" class="btn-primary" onclick="axis(8);">Raw Data</button>
+    </div>
+    <div class="container-sm text-center">
+        <p>
+            <span id="status"></span>
+        <p>
+        <div>
+            <canvas id="plotarea" width="900" height="300"> </canvas>
+        </div>
+        <div id="count" style="color:blue;font-size:600%"></div>
+        <div id="duration" style="color:blue"></div>
+        <div id="setting" style="color:green"></div>
+        <hr>
+        <div id="result"></div>
+        <hr>
+        <p>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+                crossorigin="anonymous"></script>
+            <script>
+
+                var record = "";
+                var balance = "";
+                var part_rec = "";
+                var OUT = true;
+                var uart_connection = undefined;
+                const MAX_RECORDS = 1000;
+                var raw_storage = [];
+                // smoothie related vars
+                //var smoothie = new SmoothieChart();
+                /*
+                var smoothie = new SmoothieChart({millisPerPixel:20,maxValueScale:1.0,
+                                               minValueScale:1.0,
+                                               grid:{fillStyle:'rgba(255,255,255,0.35)',strokeStyle:'#090101',verticalSections:10},
+                                               labels:{fillStyle:'#000000',fontSize:12,precision:0,showIntermediateLabels:true},tooltip:true,tooltipLine:{strokeStyle:'#bbbbbb'},
+                                               maxValue:1000,minValue:-1000});
+                */
+                var smoothie = new SmoothieChart({
+                    millisPerPixel: 100, maxValueScale: 1.0,
+                    minValueScale: 1.0,
+                    grid: { fillStyle: 'rgba(255,255,255,0.35)', strokeStyle: '#090101', verticalSections: 10 },
+                    labels: { fillStyle: '#000000', fontSize: 12, precision: 0, showIntermediateLabels: true }, tooltip: true, tooltipLine: { strokeStyle: '#bbbbbb' },
+                    maxValue: 500, minValue: 0
+                });
+                // areas of interest
+                var plotarea = document.getElementById("plotarea");
+                var count = document.getElementById("count");
+                var result = document.getElementById("result");
+                var duration = document.getElementById("duration");
+                var setting = document.getElementById("setting");
+
+                // show items flags
+                show_normal = false; // show normal data
+                show_raw = false; // show raw data
+                // header dict
+                var H = {};
+                // delay plotting by a 500 ms
+                smoothie.streamTo(plotarea, 500);
+                var line1 = new TimeSeries();
+                var line2 = new TimeSeries();
+                var line3 = new TimeSeries();
+                var line4 = new TimeSeries();
+                // Add to SmoothieChart
+                smoothie.addTimeSeries(line1,
+                    { strokeStyle: 'rgb(255,0, 0)', interpolation: 'step', lineWidth: 2 });
+                smoothie.addTimeSeries(line2,
+                    { strokeStyle: 'rgb(0, 0, 255)', lineWidth: 2 });
+                smoothie.addTimeSeries(line3,
+                    { strokeStyle: '#0b6704', lineWidth: 2 });
+                smoothie.addTimeSeries(line4,
+                    { strokeStyle: '#000000', interpolation: 'step', lineWidth: 3 });
+
+
+                var tick = new Date().getTime();
+                var prev_rep_count = 0;
+                // int to time
+                function secondsToHms(d) {
+                    d = Number(d);
+                    var h = Math.floor(d / 3600);
+                    var m = Math.floor(d % 3600 / 60);
+                    var s = Math.floor(d % 3600 % 60);
+
+                    var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+                    var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+                    var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+                    return hDisplay + mDisplay + sDisplay;
+                }
+
+                function getFileName(prefix) {
+                    // unique filename
+                    fname = prefix + Date().substring(4, 24).replaceAll(':', "_").replaceAll(" ", "_");
+                    return fname;
+                }
+
+                function downloadObjectAsJson(exportObj, exportName) {
+                    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+                    var downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", exportName + ".json");
+                    document.body.appendChild(downloadAnchorNode); // required for firefox
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                }
+
+
+                // chunks2json
+                function chunks2json(d) {
+                    const END = "}";
+                    const START = "{"
+                    var idx_start;
+                    var idx_end;
+                    var res = "";
+                    var balance = "";
+                    idx_start = d.search(START);
+                    idx_end = d.search(END);
+
+                    //console.log("proc ", OUT, idx_start, idx_end, d);
+                    switch (OUT) {
+                        case true:
+                            //console.log("Case :",OUT);
+                            if (idx_start == -1) {
+                                res = "";
+                                balance = "";
+                                break;
+                            }
+
+                            if (idx_start > -1 && idx_end > 0) {
+                                OUT = false;
+                                //console.log(OUT);
+                                res = d.substring(idx_start, idx_end + 1);
+                                balance = d.substring(idx_end + 1);
+                                break;
+                            }
+                            if (idx_start > -1 && idx_end == -1) {
+                                OUT = false;
+                                res = d.substring(idx_start);
+                                balance = ""
+                                break;
+                            }
+                            break;
+
+                        case false:
+                            //console.log("Case :",OUT);
+
+                            if (idx_end == -1) {
+                                OUT = false;
+                                res = d;
+                                break;
+                            }
+                            if (idx_end > -1) {
+                                OUT = true;
+                                res = d.substring(0, idx_end + 1);
+                                balance = d.substring(idx_end + 1);
+                                break;
+                            }
+                            break
                     }
-                   if (S.type == "R") { // plot & show raw data
-                        if (show_raw) {
-                           result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                        }
-                        process_raw(S);        
-                    }
-                   if (S.type == "H") {
-                       H = S;
-                       result.innerHTML = record +"<BR>"+ document.getElementById("result").innerHTML; 
-                       setting.innerHTML = "Battery : " + Math.round(S.battery*100)/100;
-                    
-                   }
-                 } //endif (S)
-               } // endif (record)
-          record="";
-          OUT=true;
-          } //endif (OUT)
-    });
-    connection.write("console.log(JSON.stringify(S));\n", function(d) {console.log("Requested Header from device")});
-    connection.on('close', function() { document.getElementById("status").innerHTML = 'Connection Closed';});
-  });
-  function process_raw(data) {
-            //console.log("Data: ", data);
-            switch (data.type) {
-                case 'R':
-                    // optional
-                    //document.getElementById("result").innerHTML = JSON.stringify(data);
-                    // important to add current date to time in millis
-                    tick = tick + 100;
-                    //line1.append(tick , data.x);
-                    //line2.append(tick , data.y);
-                    //line3.append(tick , data.z);
-                    line2.append(tick , data.g);
-                    break;
+                    //console.log("proc returns ", res);
+                    return [res, balance];
+                }
+
+
+
+                // chunks2json end
+
+                UART.connect(function (connection) {
+
+                    if (!connection) throw "Error!";
+
+                    uart_connection = connection;
+
+                    document.getElementById("status").innerHTML = "Connected";
+                    connection.on('data', function (d) {
+                        //console.log("Before: ",OUT, part_rec," | ", balance," | ", d," | ");
+                        //console.log("\tRecord: ",record);
+                        [part_rec, balance] = chunks2json(balance + d);
+                        //console.log("After : ",OUT, part_rec," | ", balance," | ");
+                        record = record + part_rec;
+                        //console.log("\tRecord: "+record);
+                        if (OUT) {
+                            var S = {};
+                            if (record) { // ensure non empty record
+                                S = JSON.parse(record);
+                                if (S) { // ensure we have a non empty json
+                                    if (S.type == "N") { // normal data
+                                        process_raw(S);
+                                        count.innerHTML = S.rep_count;
+                                        duration.innerHTML = "Active: " + secondsToHms(S.active) + "\tIdle: " + secondsToHms(S.idle);
+                                        if (show_normal) {
+                                            result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
+                                        }
+                                    }
+                                    if (S.type == "R") { // plot & show raw data
+                                        if (show_raw) {
+                                            result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
+                                        }
+                                        result.innerHTML = ("Gathering raw data records :" + raw_storage.length);
+                                        if (raw_storage.length == 1000) {
+                                            // write to file
+                                            downloadObjectAsJson(raw_storage, getFileName);
+                                        }
+                                        process_raw(S);
+                                    }
+                                    if (S.type == "H") {
+                                        H = S;
+                                        result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
+                                        setting.innerHTML = "Battery : " + Math.round(S.battery * 100) / 100;
+
+                                    }
+                                } //endif (S)
+                            } // endif (record)
+                            record = "";
+                            OUT = true;
+                        } //endif (OUT)
+                    });
+                    connection.write("console.log(JSON.stringify(S));\n", function (d) { console.log("Requested Header from device") });
+                    connection.on('close', function () { document.getElementById("status").innerHTML = 'Connection Closed'; });
+                });
+                function process_raw(data) {
+                    //console.log("Data: ", data);
+                    switch (data.type) {
+                        case 'R':
+                            // optional
+                            //document.getElementById("result").innerHTML = JSON.stringify(data);
+                            // important to add current date to time in millis
+                            tick = tick + 100;
+                            //line1.append(tick , data.x);
+                            //line2.append(tick , data.y);
+                            //line3.append(tick , data.z);
+                            line2.append(tick, data.g);
+                            if (raw_storage.length > MAX_RECORDS) {
+                                raw_storage.unshift();
+                                raw_storage.push(data);
+
+                                break;
              case 'N':
-                    tick = tick + 1000;
-                    console.log(tick, data.rep_count, prev_rep_count );
-                    line1.append(tick,(data.rep_count - prev_rep_count)*100 + 50); // bias 0 with 50 and multiply any rep > 0 with 100
-                    line4.append(tick,data.magnitude);
-                    prev_rep_count = data.rep_count;
-                    break;
-                default:
-                    console.error('{"error":"chunks2json-unsupported data type"');
-            }
-    };
-  function show_header() {
-          uart_connection.write("console.log(JSON.stringify(S));\n");
-  }
-  function axis(ax) {
-       var cmd = "process_command("+ax+");\n";
-       var btnid = ["XYZbtn","Xbtn","Ybtn","Zbtn","XYbtn","XZbtn","YZbtn","Clear","Raw"];
-       var red = "btn-danger";
-       var green = "btn-success";
-       var this_btn_idx = Number(ax);
-       var btn = document.getElementById(btnid[this_btn_idx]);
-          
-       if (this_btn_idx < 7) { //process button classes
-          btn.className = green;   
-          for ( i=0;i<7;i++) {
-            if (i !=this_btn_idx ) {
-              //console.log("cmd = ",i)
-              btn = document.getElementById(btnid[i]);
-              btn.className = red;
-            }
-          } 
-       }
-       // exception processing 
-       // clear : prev_rep_count   
-       if (this_btn_idx == 7) {
-           prev_rep_count = 0
-       }
-   
-       // toggle text if ax = 8
-       if (this_btn_idx == 8) {
-           //console.log(btn.value);
-           if (btn.textContent == "Raw Data") {
-             btn.textContent = "Normal Data";
-             
-             plotarea.className="";
-           } else { 
-             btn.textContent = "Raw Data";
-             //plotarea.className="collapse in";
-             
-           }
-       }
-   // do as per cmd on the device
-   uart_connection.write(cmd);
-   
-  }
-   
-  </script>
-  </div>  
- </body>
+                            tick = tick + 1000;
+                            console.log(tick, data.rep_count, prev_rep_count);
+                            line1.append(tick, (data.rep_count - prev_rep_count) * 100 + 50); // bias 0 with 50 and multiply any rep > 0 with 100
+                            line4.append(tick, data.magnitude);
+                            prev_rep_count = data.rep_count;
+                            break;
+                        default:
+                            console.error('{"error":"chunks2json-unsupported data type"');
+                    }
+                };
+                function show_header() {
+                    uart_connection.write("console.log(JSON.stringify(S));\n");
+                }
+                function axis(ax) {
+                    var cmd = "process_command(" + ax + ");\n";
+                    var btnid = ["XYZbtn", "Xbtn", "Ybtn", "Zbtn", "XYbtn", "XZbtn", "YZbtn", "Clear", "Raw"];
+                    var red = "btn-danger";
+                    var green = "btn-success";
+                    var this_btn_idx = Number(ax);
+                    var btn = document.getElementById(btnid[this_btn_idx]);
+
+                    if (this_btn_idx < 7) { //process button classes
+                        btn.className = green;
+                        for (i = 0; i < 7; i++) {
+                            if (i != this_btn_idx) {
+                                //console.log("cmd = ",i)
+                                btn = document.getElementById(btnid[i]);
+                                btn.className = red;
+                            }
+                        }
+                    }
+                    // exception processing 
+                    // clear : prev_rep_count   
+                    if (this_btn_idx == 7) {
+                        prev_rep_count = 0
+                    }
+
+                    // toggle text if ax = 8
+                    if (this_btn_idx == 8) {
+                        //console.log(btn.value);
+                        if (btn.textContent == "Raw Data") {
+                            btn.textContent = "Normal Data";
+
+                            plotarea.className = "";
+                        } else {
+                            btn.textContent = "Raw Data";
+                            //plotarea.className="collapse in";
+
+                        }
+                    }
+                    // do as per cmd on the device
+                    uart_connection.write(cmd);
+
+                }
+
+            </script>
+    </div>
+</body>
+
 </html>
