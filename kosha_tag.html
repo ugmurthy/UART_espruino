@@ -207,12 +207,12 @@
 
                     document.getElementById("status").innerHTML = "Connected";
                     connection.on('data', function (d) {
-                        //console.log("Before: ",OUT, part_rec," | ", balance," | ", d," | ");
-                        //console.log("\tRecord: ",record);
+                        console.log("Before: ", OUT, part_rec, " | ", balance, " | ", d, " | ");
+                        console.log("\tRecord: ", record);
                         [part_rec, balance] = chunks2json(balance + d);
-                        //console.log("After : ",OUT, part_rec," | ", balance," | ");
+                        console.log("After : ", OUT, part_rec, " | ", balance, " | ");
                         record = record + part_rec;
-                        //console.log("\tRecord: "+record);
+                        console.log("\tRecord: " + record);
                         if (OUT) {
                             var S = {};
                             if (record) { // ensure non empty record
