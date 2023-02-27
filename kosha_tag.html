@@ -265,9 +265,9 @@
                             if (raw_storage.length > MAX_RECORDS) {
                                 raw_storage.unshift();
                                 raw_storage.push(data);
-
-                                break;
-             case 'N':
+                            }
+                            break;
+                        case 'N':
                             tick = tick + 1000;
                             console.log(tick, data.rep_count, prev_rep_count);
                             line1.append(tick, (data.rep_count - prev_rep_count) * 100 + 50); // bias 0 with 50 and multiply any rep > 0 with 100
