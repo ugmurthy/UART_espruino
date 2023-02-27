@@ -84,6 +84,7 @@
                 var result = document.getElementById("result");
                 var duration = document.getElementById("duration");
                 var setting = document.getElementById("setting");
+                var sp = document.getElementById("recs");
 
                 // show items flags
                 show_normal = false; // show normal data
@@ -271,7 +272,9 @@
                                 raw_storage.push(H);
                             }
                             raw_storage.push(data);
-                            document.getElementById("recs").textContent = raw_storage.length;
+                            if (sp) {
+                                sp.textContent = raw_storage.length;
+                            }
                             break;
 
                         case 'N':
