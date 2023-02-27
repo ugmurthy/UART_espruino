@@ -251,7 +251,7 @@
                     connection.on('close', function () { document.getElementById("status").innerHTML = 'Connection Closed'; });
                 });
                 function process_raw(data) {
-                    //console.log("Data: ", data);
+                    console.log("Data: ", data);
                     switch (data.type) {
                         case 'R':
                             // optional
@@ -264,8 +264,9 @@
                             line2.append(tick, data.g);
                             if (raw_storage.length > MAX_RECORDS) {
                                 raw_storage.unshift();
-                                raw_storage.push(data);
                             }
+                            raw_storage.push(data);
+
                             break;
                         case 'N':
                             tick = tick + 1000;
