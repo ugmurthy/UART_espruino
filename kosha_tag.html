@@ -231,7 +231,12 @@
                                         result.innerHTML = ("Gathering raw data records :" + raw_storage.length);
                                         if (raw_storage.length == 1000) {
                                             // write to file
-                                            downloadObjectAsJson(raw_storage, getFileName);
+                                            var fname = getFileName('rACC_')
+                                            result.innerHTML = result.innerHTML + " Writing to : " + fname + ".json";
+                                            downloadObjectAsJson(raw_storage, fname);
+                                            result.innerHTML = result.innerHTML + "<BR>...Downloaded : " + fname + ".json";
+                                            raw_storage = [];
+                                            axis(8); // switch to normal data
                                         }
                                         process_raw(S);
                                     }
@@ -251,7 +256,7 @@
                     connection.on('close', function () { document.getElementById("status").innerHTML = 'Connection Closed'; });
                 });
                 function process_raw(data) {
-                    console.log("Data: ", data);
+                    //console.log("Data: ", data);
                     switch (data.type) {
                         case 'R':
                             // optional
