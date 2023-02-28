@@ -36,10 +36,9 @@
                 <span id="recs" class="badge rounded-pill bg-dark"></span>
             </button>
     </div>
-    <div class="container-sm text-center">
-        <p>
-            <span id="status"></span>
-        <p>
+    <div class="container mt-3 text-center">
+
+        <div id="status" class="alert alert-info">Status</div>
         <div>
             <canvas id="plotarea" width="900" height="300"> </canvas>
         </div>
@@ -210,7 +209,7 @@
                     }
                     uart_connection = connection;
                     status.className = "alert alert-success"
-                    status.textContent = "Connected";
+                    status.innerHTML = "Connected";
                     connection.on('data', function (d) {
                         //console.log("Before: ", OUT, part_rec, " | ", balance, " | ", d, " | ");
                         //console.log("\tRecord: ", record);
@@ -251,7 +250,7 @@
                                     if (S.type == "H") {
                                         H = S;
                                         result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
-                                        status.textContent = status.textContent + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
+                                        status.innerHTML = status.innerHTML + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
                                     }
                                 } //endif (S)
                             } // endif (record)
@@ -260,7 +259,10 @@
                         } //endif (OUT)
                     });
                     connection.write("console.log(JSON.stringify(S));\n", function (d) { console.log("Requested Header from device") });
-                    connection.on('close', function () { document.getElementById("status").innerHTML = 'Connection Closed'; });
+                    connection.on('close', function () {
+                        status.innerHTML = 'Connection Closed';
+                        status.className = "alert alert-info";
+                    });
                 });
                 function process_raw(data) {
                     //console.log("Data: ", data);
