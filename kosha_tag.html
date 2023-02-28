@@ -33,7 +33,7 @@
             <button type="button" class="btn-primary" onclick="show_header();">Headers</button>
             <button id="Clear" type="button" class="btn-primary" onclick="axis(7);">Clear</button>
             <button id="Raw" type="button" class="btn-primary" onclick="axis(8);">Download
-                <span id="recs" class="badge bg-dark">0</span>
+                <span id="recs" class="badge rounded-pill bg-dark">0</span>
             </button>
     </div>
     <div class="container-sm text-center">
@@ -85,6 +85,7 @@
                 var duration = document.getElementById("duration");
                 var setting = document.getElementById("setting");
                 var sp = document.getElementById("recs");
+                var status = document.getElementById("status");
 
                 // show items flags
                 show_normal = false; // show normal data
@@ -202,18 +203,21 @@
 
                 UART.connect(function (connection) {
 
-                    if (!connection) throw "Error!";
-
+                    if (!connection) {
+                        throw "Error!";
+                        status.className = "alert alert-danger"
+                        status.innerHTML = "Error Connecting"
+                    }
                     uart_connection = connection;
-
-                    document.getElementById("status").innerHTML = "Connected";
+                    status.className = "alert alert-success"
+                    status.innerHTML = "Connected";
                     connection.on('data', function (d) {
-                        console.log("Before: ", OUT, part_rec, " | ", balance, " | ", d, " | ");
-                        console.log("\tRecord: ", record);
+                        //console.log("Before: ", OUT, part_rec, " | ", balance, " | ", d, " | ");
+                        //console.log("\tRecord: ", record);
                         [part_rec, balance] = chunks2json(balance + d);
-                        console.log("After : ", OUT, part_rec, " | ", balance, " | ");
+                        //console.log("After : ", OUT, part_rec, " | ", balance, " | ");
                         record = record + part_rec;
-                        console.log("\tRecord: " + record);
+                        //console.log("\tRecord: " + record);
                         if (OUT) {
                             var S = {};
                             if (record) { // ensure non empty record
@@ -235,10 +239,11 @@
                                         if (raw_storage.length == 1000) {
                                             // write to file
                                             var fname = getFileName('rACC_')
-                                            result.innerHTML = result.innerHTML + " Writing to : " + fname + ".json";
+                                            //result.innerHTML = result.innerHTML + " Writing to : " + fname + ".json";
                                             downloadObjectAsJson(raw_storage, fname);
-                                            result.innerHTML = result.innerHTML + "<BR>...Downloaded : " + fname + ".json";
+                                            //result.innerHTML = result.innerHTML + "<BR>...Downloaded : " + fname + ".json";
                                             raw_storage = [];
+                                            sp.textContent = "";
                                             axis(8); // switch to normal data
                                         }
                                         process_raw(S);
@@ -246,8 +251,7 @@
                                     if (S.type == "H") {
                                         H = S;
                                         result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
-                                        setting.innerHTML = "Battery : " + Math.round(S.battery * 100) / 100;
-
+                                        status.innerHTML = status.innerHTML + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
                                     }
                                 } //endif (S)
                             } // endif (record)
