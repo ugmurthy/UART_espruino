@@ -84,7 +84,7 @@
                 var duration = document.getElementById("duration");
                 var setting = document.getElementById("setting");
                 var sp = document.getElementById("recs");
-                var status = document.getElementById("status");
+                var st = document.getElementById("status");
 
                 // show items flags
                 show_normal = false; // show normal data
@@ -204,14 +204,14 @@
 
                     if (!connection) {
                         throw "Error!";
-                        status.className = "alert alert-danger"
-                        status.textContent = "Error Connecting"
+                        st.className = "alert alert-danger"
+                        st.textContent = "Error Connecting"
                     }
                     uart_connection = connection;
-                    console.log("Status", status);
-                    status.className = "alert alert-success"
-                    status.textContent = "Connected";
-                    console.log("Status Connected ", status);
+                    console.log("Status", st);
+                    st.className = "alert alert-success"
+                    st.textContent = "Connected";
+                    console.log("Status Connected ", st);
 
                     connection.on('data', function (d) {
                         //console.log("Before: ", OUT, part_rec, " | ", balance, " | ", d, " | ");
@@ -253,7 +253,7 @@
                                     if (S.type == "H") {
                                         H = S;
                                         result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
-                                        status.textContent = status.textContent + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
+                                        st.textContent = st.textContent + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
                                     }
                                 } //endif (S)
                             } // endif (record)
@@ -263,8 +263,8 @@
                     });
                     connection.write("console.log(JSON.stringify(S));\n", function (d) { console.log("Requested Header from device") });
                     connection.on('close', function () {
-                        status.textContent = 'Connection Closed';
-                        status.className = "alert alert-info";
+                        st.textContent = 'Connection Closed';
+                        st.className = "alert alert-info";
                     });
                 });
                 function process_raw(data) {
