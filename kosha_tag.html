@@ -33,7 +33,7 @@
             <button type="button" class="btn-primary" onclick="show_header();">Headers</button>
             <button id="Clear" type="button" class="btn-primary" onclick="axis(7);">Clear</button>
             <button id="Raw" type="button" class="btn-primary" onclick="axis(8);">Download
-                <span id="recs" class="badge bg-dark"></span>
+                <span id="recs" class="badge bg-dark">0</span>
             </button>
     </div>
     <div class="container-sm text-center">
@@ -319,19 +319,18 @@
                     if (this_btn_idx == 8) {
                         //console.log(btn.value);
                         if (btn.textContent == "Download") {
-
-
-                            plotarea.className = "";
+                            btn.textContent = "Records ";
+                            //       plotarea.className = "";
                         } else {
-                            btn.textContent = "Raw Data";
+                            btn.textContent = "Download";
                             //plotarea.className="collapse in";
-
+                            //   }
                         }
-                    }
-                    // do as per cmd on the device
-                    uart_connection.write(cmd);
 
-                }
+                        // do as per cmd on the device
+                        uart_connection.write(cmd);
+
+                    }
 
             </script>
     </div>
