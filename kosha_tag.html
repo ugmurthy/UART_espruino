@@ -205,11 +205,14 @@
                     if (!connection) {
                         throw "Error!";
                         status.className = "alert alert-danger"
-                        status.innerHTML = "Error Connecting"
+                        status.textContent = "Error Connecting"
                     }
                     uart_connection = connection;
+                    console.log("Status", status);
                     status.className = "alert alert-success"
-                    status.innerHTML = "Connected";
+                    status.textContent = "Connected";
+                    console.log("Status Connected ", status);
+
                     connection.on('data', function (d) {
                         //console.log("Before: ", OUT, part_rec, " | ", balance, " | ", d, " | ");
                         //console.log("\tRecord: ", record);
@@ -250,7 +253,7 @@
                                     if (S.type == "H") {
                                         H = S;
                                         result.innerHTML = record + "<BR>" + document.getElementById("result").innerHTML;
-                                        status.innerHTML = status.innerHTML + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
+                                        status.textContent = status.textContent + ", Battery : " + Math.round(S.battery * 100) / 100 + "V";
                                     }
                                 } //endif (S)
                             } // endif (record)
@@ -260,7 +263,7 @@
                     });
                     connection.write("console.log(JSON.stringify(S));\n", function (d) { console.log("Requested Header from device") });
                     connection.on('close', function () {
-                        status.innerHTML = 'Connection Closed';
+                        status.textContent = 'Connection Closed';
                         status.className = "alert alert-info";
                     });
                 });
