@@ -10,11 +10,12 @@
 <p>Z: <span class="bar"><span id="barZ"></span></span></p>
 <script>
 // Code to upload to Bangle.js
-var LOADED = FALSE;
+
 var time_now = Date.now() / 1000; // convert to seconds for espruino
 var BANGLE_CODE = `
 // helper funcs
 // helper functions to convert base if int
+var LOADED = false;
 setTime(${time_now});
 console.log("Time set to : ",Date());
 function bin2dec(bin){
