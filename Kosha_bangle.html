@@ -196,7 +196,7 @@ Bangle.on('accel', function (xyz) {
     R.data = data;
 
     if (ACCEL && LOADED) {
-        console.log(JSON.stringify(R));
+        console.log(R);
         signal.push(R);
     }
 });
