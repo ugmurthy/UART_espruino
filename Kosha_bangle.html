@@ -1,0 +1,336 @@
+<html>
+ <head>
+  <title>Bangle.js Accelerometer streaming</title>
+ </head>
+ <body>
+<script src="https://www.puck-js.com/puck.js"></script>
+<button id="btnConnect">Connect</button>
+<p>X: <span class="bar"><span id="barX"></span></span></p>
+<p>Y: <span class="bar"><span id="barY"></span></span></p>
+<p>Z: <span class="bar"><span id="barZ"></span></span></p>
+<script>
+// Code to upload to Bangle.js
+var BANGLE_CODE = `
+// helper funcs
+// helper functions to convert base if int
+function bin2dec(bin){
+    return parseInt(bin, 2).toString(10);
+  }
+function dec2bin(dec){
+    return (dec >>> 0).toString(2);
+}
+
+function int2Hex(integer) {
+    var str = Number(integer).toString(16);
+    return str.length == 1 ? "0" + str : str;
+}
+
+
+function int2Bin(integer) {
+    var str = Number(integer).toString(2);
+    return str.length == 1 ? "0" + str : str;
+}
+
+
+// read register
+function readReg(hexaddr,ret) {
+  var regval = Bangle.accelRd(hexaddr);
+  if (ret===0) return regval;
+  if (ret===1) return int2Bin(regval);
+  //default when ret is undefined
+  return int2Hex(regval);
+}
+
+function getODR() {
+  let odr = Number(readReg(0x1B,ret=0)) & 0xF0;
+  
+  switch(odr) {
+  case 0:
+    return 12.5;
+  case 1:
+    return 25;
+  case 2:
+      return 50;
+  case 3:
+      return 100;    
+  default:
+    return -1;
+  }
+}
+
+function getGscale() {
+  let g = (Number(readReg(0x18,ret=0)) >> 3 ) & 3;
+  
+  switch (g) {
+    
+    case 0:
+      return 2;
+    case 1:
+      return 4;
+    case 2:
+      return 8;
+    default:
+      return -1;
+  }
+}
+function getTilt() {
+    var t = {};
+    
+    // show right most 6 bits
+    bin = readReg(0x10,ret=1).padStart(6,'0');
+    t.value = parseInt(bin,2);
+
+    //LE RI DO UP FD FU
+    //-x,+x,-y,+y,-z,+z
+    labels = ['-X','+X','-Y','+Y','-Z','+Z'];
+
+    var tilt = bin.split("").map( (bit,idx)=> {
+            if (bit==='1') {
+                return labels[idx];
+            }
+    });
+    t.tilt = tilt.join("");
+    return t;
+}
+
+/*
+function recordStart() {"ram"
+  Bangle.setLCDTimeout(0); // force LCD on
+  accelIdx = 0;
+  lastAccel = [];
+  Bangle.accelWr(0x18,0b01110100); // off, +-8g
+  Bangle.accelWr(0x1B,0x03 | 0x40); // 100hz output, ODR/2 filter
+  Bangle.accelWr(0x18,0b11110100); // +-8g
+  Bangle.setPollInterval(10); // 100hz input
+  setTimeout(function() {
+    Bangle.on('accel',accelHandlerTrigger);
+    g.clear(1).setFont("6x8",2).setFontAlign(0,0);
+    g.drawString("Waiting",g.getWidth()/2,g.getHeight()/2);
+  }, 200);
+}
+*/
+
+// CONFIG
+var INCLUDE_ANGLES = false;
+var INCLUDE_RMS = false;
+
+
+// DATA BUFFERES
+var signal = [];
+var gesture = [];
+var tilt = [];
+
+//
+var data={};
+var x = 0;
+var y = 0;
+var z = 0;
+var g = 0;
+var prev = 0;
+var now;
+var GESTURE = true;
+var ACCEL = trur;
+
+G={};
+R = {};
+var seqno =0;
+DEG2RAD = 180 / Math.PI;
+POLL = 80 ;// ms
+FREQ =  1/(POLL/1000);
+Bangle.setPollInterval(POLL);
+
+//console.log(getODR()," Hz");
+//console.log("+/-",getGscale(), "g");
+
+//console.log(Bangle.getOptions());
+var DECIMALS = 2;
+var MULTIPLIER = Math.pow(10,DECIMALS);
+
+//Ruuvitag.setAccelOn(true);
+
+header = {type:"H",ODR:getODR(),gScale:getGscale(),SamplingPeriod:POLL,battery:NRF.getBattery(),mac:NRF.getAddress()};
+signal.push(header);
+
+Bangle.on('accel', function (xyz) {
+    now = getTime();
+    // init substructures
+    data = {};
+    R = {};
+
+    if (prev===0) { // first time
+        prev = now;
+    }
+    R.type = 'A';
+    seqno += 1;
+    R.seqno = seqno;
+    R.tstamp = now;
+
+    prev=now;
+    x = Math.round(xyz.x*MULTIPLIER)/MULTIPLIER;
+    y = Math.round(xyz.y*MULTIPLIER)/MULTIPLIER;
+    z = Math.round(xyz.z*MULTIPLIER)/MULTIPLIER;
+    
+    t = getTilt();
+    // check changes in tilt and record
+
+    if (INCLUDE_ANGLES || INCLUDE_RMS) {
+        res_vector = Math.round(Math.sqrt(x * x + y * y + z * z));
+        if (INCLUDE_ANGLES) {
+            data.phi = Math.round(Math.acos(z / res_vector) * DEG2RAD);
+            data.theta = Math.round(Math.atan2(x, y) * DEG2RAD);
+        }
+        if (INCLUDE_RMS) {
+            data.RMS = res_vector;
+        }
+    }
+    
+    data.x = x;
+    data.y = y;
+    data.z = z;
+    data.tilt = t;
+    R.data = data;
+
+    if (ACCEL) {
+        console.log(JSON.stringify(R));
+        signal.push(R);
+    }
+});
+
+Bangle.on('gesture', function(xyz) {
+    G.type="G"
+    G.tstamp=now;
+    G.len = xyz.length;
+    G.data=xyz;
+    
+    if (GESTURE) {
+        signal.push(G);
+        console.log(G); 
+    }
+    //console.log(xyz);                                   
+});
+
+function toggleGesture() {
+    GESTURE=!GESTURE;
+    console.log("Gesture is ",GESTURE);
+}
+
+function toggleAccel() {
+    ACCEL=!ACCEL;
+    console.log("Accel is ",ACCEL);
+}
+
+function decimals(d) {
+    DECIMALS=d;
+    MULTIPLIER=Math.pow(10,DECIMALS);
+}
+
+function toggle_angle_data() {
+    INCLUDE_ANGLES = !INCLUDE_ANGLES;
+}
+
+function toggle_rms_data() {
+    INCLUDE_RMS = !INCLUDE_RMS;
+}
+
+
+/* needed for app launcher
+require("Storage").write("accbangle.info",{
+  "id":"Kosha",
+  "name":"Kosha",
+  "src":"accbangle.app.js",
+
+});
+*/
+`;
+
+// When we click the connect button...
+var connection;
+document.getElementById("btnConnect").addEventListener("click", function() {
+  // disconnect if connected already
+  if (connection) {
+    connection.close();
+    connection = undefined;
+  }
+  // Connect
+  Puck.connect(function(c) {
+    if (!c) {
+      alert("Couldn't connect!");
+      return;
+    }
+    connection = c;
+    // Handle the data we get back, and call 'onLine'
+    // whenever we get a line
+    var buf = "";
+    connection.on("data", function(d) {
+      buf += d;
+      var l = buf.split("\n");
+      buf = l.pop();
+      l.forEach(onLine);
+    });
+    // First, reset the Bangle
+    connection.write("reset();\n", function() {
+      // Wait for it to reset itself
+      setTimeout(function() {
+        // Now upload our code to it
+        connection.write("\x03\x10if(1){"+BANGLE_CODE+"}\n",
+          function() { console.log("Ready..."); });
+      }, 1500);
+    });
+  });
+});
+
+// When we get a line of data, check it and if it's
+// from the accelerometer, update it
+function onLine(line) {
+  console.log("RECEIVED:"+line);
+  /*
+  var d = line.split(",");
+  if (d.length==4 && d[0]=="A") {
+    // we have an accelerometer reading
+    var accel = {
+      x : parseInt(d[1]),
+      y : parseInt(d[2]),
+      z : parseInt(d[3]),
+    };    
+    // Update bar positions
+    setBarPos("barX", accel.x);
+    setBarPos("barY", accel.y);
+    setBarPos("barZ", accel.z);
+  }
+  */
+}
+// Set the position of each bar
+function setBarPos(id,d) {
+  var s = document.getElementById(id).style;
+  if (d>150) d=150;
+  if (d<-150) d=-150;
+  if (d>=0) {
+    s.left="150px";
+    s.width=d+"px";
+  } else { // less than 0
+    s.left=(150+d)+"px";
+    s.width=(-d)+"px";
+  }
+}
+</script>
+<style>
+/* Styles just to make the bars for X Y and Z look neat */
+.bar {
+  width : 500px;
+  height: 24px;
+  background-color : #D0D0D0;
+  position:relative;
+  display: inline-block;
+}
+.bar span {
+  width : 1px;
+  height: 20px;
+  background-color : red;
+  position:absolute;
+  display: inline-block;
+  left: 150px;
+  top: 2px;
+}
+</style>
+ </body>
+</html>
