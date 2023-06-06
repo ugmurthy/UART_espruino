@@ -186,7 +186,7 @@ Bangle.on('accel', function (xyz) {
     // init substructures
     data = {};
     R = {};
-    if (seqno>MAX_SAMPLES) {
+    if (seqno >= MAX_SAMPLES) {
         ACCEL=false;
         GESTURE=false;
         if (INCLUDE_TILT) {
