@@ -10,12 +10,13 @@
 <p>Z: <span class="bar"><span id="barZ"></span></span></p>
 <script>
 // Code to upload to Bangle.js
+var LOADED = FALSE;
 var time_now = Date.now() / 1000; // convert to seconds for espruino
 var BANGLE_CODE = `
 // helper funcs
 // helper functions to convert base if int
 setTime(${time_now});
-console.log(Time set to : ",Date());
+console.log("Time set to : ",Date());
 function bin2dec(bin){
     return parseInt(bin, 2).toString(10);
   }
@@ -193,7 +194,7 @@ Bangle.on('accel', function (xyz) {
     data.tilt = t;
     R.data = data;
 
-    if (ACCEL) {
+    if (ACCEL && LOADED) {
         console.log(JSON.stringify(R));
         signal.push(R);
     }
@@ -205,7 +206,7 @@ Bangle.on('gesture', function(xyz) {
     G.len = xyz.length;
     G.data=xyz;
     
-    if (GESTURE) {
+    if (GESTURE && LOADED) {
         signal.push(G);
         console.log(G); 
     }
@@ -244,6 +245,7 @@ require("Storage").write("accbangle.info",{
 
 });
 */
+LOADED=true;
 `;
 
 // When we click the connect button...
