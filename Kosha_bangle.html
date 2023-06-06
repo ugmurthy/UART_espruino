@@ -137,7 +137,7 @@ var GESTURE = true;
 var ACCEL = true;
 const MAX_SAMPLES = 384;
 G={};
-R = {};
+R={};
 var seqno =0;
 DEG2RAD = 180 / Math.PI;
 POLL = 80 ;// ms
@@ -155,6 +155,7 @@ var MULTIPLIER = Math.pow(10,DECIMALS);
 
 header = {type:"H",ODR:getODR(),gScale:getGscale(),SamplingPeriod:POLL,battery:NRF.getBattery(),mac:NRF.getAddress()};
 signal.push(header);
+console.log(header);
 
 Bangle.on('accel', function (xyz) {
 
@@ -168,7 +169,7 @@ Bangle.on('accel', function (xyz) {
     now = getTime();
     // init substructures
     data = {};
-    R = {};
+   
 
     if (prev===0) { // first time
         prev = now;
