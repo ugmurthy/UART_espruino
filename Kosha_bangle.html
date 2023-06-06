@@ -155,7 +155,7 @@ var MULTIPLIER = Math.pow(10,DECIMALS);
 
 header = {type:"H",ODR:getODR(),gScale:getGscale(),SamplingPeriod:POLL,battery:NRF.getBattery(),mac:NRF.getAddress()};
 signal.push(header);
-console.log(header);
+console.log(JSON.stringigy(header));
 
 Bangle.on('accel', function (xyz) {
 
@@ -291,6 +291,7 @@ document.getElementById("btnConnect").addEventListener("click", function() {
       // Wait for it to reset itself
       setTimeout(function() {
         // Now upload our code to it
+        console.log("writing code to device");
         connection.write("\x03\x10if(1){"+BANGLE_CODE+"}\n",
           function() { console.log("Ready..."); });
       }, 1500);
