@@ -118,7 +118,7 @@ function recordStart() {"ram"
 // CONFIG
 var INCLUDE_ANGLES = false;
 var INCLUDE_RMS = false;
-var INCLUDE_TILT = false;
+var INCLUDE_TILT = true;
 
 // DATA BUFFERES
 var signal = [];
@@ -208,8 +208,9 @@ Bangle.on('accel', function (xyz) {
 
     if (ACCEL && LOADED) {
         signal.push(R);
-        console.log(R);
-    }
+        //console.log(R);
+        Bluetooth.println(JSON.stringify(R);
+}
 });
 
 Bangle.on('gesture', function(xyz) {
@@ -220,7 +221,8 @@ Bangle.on('gesture', function(xyz) {
     
     if (GESTURE && LOADED) {
         signal.push(G);
-        console.log(G); 
+        //console.log(G);
+        Bluetooth.println(JSON.stringify(G);
     }
     //console.log(xyz);                                   
 });
