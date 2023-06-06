@@ -18,6 +18,8 @@ var BANGLE_CODE = `
 var LOADED = false;
 setTime(${time_now});
 console.log("Time set to : ",Date());
+// helper funcs
+// helper functions to convert base if int
 function bin2dec(bin){
     return parseInt(bin, 2).toString(10);
   }
@@ -78,6 +80,20 @@ function getGscale() {
       return -1;
   }
 }
+
+function enableTilt() {
+    // 0x18  CNTL1 pg 40
+    cntl1 = Number(readReg(0x18,ret=0));
+    console.log("0x18 : ",int2Bin(cntl1).padStart(8,'0'));
+    // setting PC1 to 0 and TPE to 1
+    cntl1 = (0x7F & cntl1) + 0x01;
+    // write reg
+    Bangle.accelWr(0x18,cntl1);
+    // write reg with PC1 = 1
+    Bangle.accelWr(0x18,cntl1 | 0x80);
+    console.log("0x18 : ",readReg(0x18,ret=1).padStart(8,'0'));
+}
+
 function getTilt() {
     var t = {};
     
@@ -116,9 +132,11 @@ function recordStart() {"ram"
 */
 
 // CONFIG
+var LOADED = false;
 var INCLUDE_ANGLES = false;
 var INCLUDE_RMS = false;
-var INCLUDE_TILT = true;
+var INCLUDE_TILT=true;
+var MAX_SAMPLES=384
 
 // DATA BUFFERES
 var signal = [];
@@ -135,9 +153,9 @@ var prev = 0;
 var now;
 var GESTURE = true;
 var ACCEL = true;
-const MAX_SAMPLES = 384;
+
 G={};
-R={};
+R = {};
 var seqno =0;
 DEG2RAD = 180 / Math.PI;
 POLL = 80 ;// ms
@@ -151,26 +169,24 @@ Bangle.setPollInterval(POLL);
 var DECIMALS = 2;
 var MULTIPLIER = Math.pow(10,DECIMALS);
 
-//Ruuvitag.setAccelOn(true);
-
+if (INCLUDE_TILT) {
+    enableTilt();
+}
 header = {type:"H",ODR:getODR(),gScale:getGscale(),SamplingPeriod:POLL,battery:NRF.getBattery(),mac:NRF.getAddress()};
 signal.push(header);
-console.log(JSON.stringigy(header));
+console.log(JSON.stringify(header));
 
 Bangle.on('accel', function (xyz) {
 
-    if (seqno > 384) { // stop operation
-        ACCEL = false;
-        GESTURE = false;
-        Bangle.removeAllListeners("accel");
-        Bangle.removeAllListeners("gesture");
-        NRF.disconnect("End of task");
-    }
     now = getTime();
     // init substructures
     data = {};
-   
-
+    R = {};
+    if (seqno>MAX_SAMPLES) {
+        ACCEL=false;
+        GESTURE=false;
+        NRF.disconnect();
+    }
     if (prev===0) { // first time
         prev = now;
     }
@@ -201,16 +217,13 @@ Bangle.on('accel', function (xyz) {
     data.x = x;
     data.y = y;
     data.z = z;
-    if (INCLUDE_TILT) {
-     data.tilt = t;
-    }
+    data.tilt = t;
     R.data = data;
 
     if (ACCEL && LOADED) {
+        console.log(JSON.stringify(R));
         signal.push(R);
-        //console.log(R);
-        console.log(JSON.stringify(R);
-}
+    }
 });
 
 Bangle.on('gesture', function(xyz) {
@@ -221,8 +234,7 @@ Bangle.on('gesture', function(xyz) {
     
     if (GESTURE && LOADED) {
         signal.push(G);
-        //console.log(G);
-        console.log(JSON.stringify(G);
+        console.log(JSON.stringify(G)); 
     }
     //console.log(xyz);                                   
 });
@@ -250,7 +262,7 @@ function toggle_rms_data() {
     INCLUDE_RMS = !INCLUDE_RMS;
 }
 
-
+LOADED=true;
 /* needed for app launcher
 require("Storage").write("accbangle.info",{
   "id":"Kosha",
@@ -259,7 +271,6 @@ require("Storage").write("accbangle.info",{
 
 });
 */
-LOADED=true;
 `;
 
 // When we click the connect button...
