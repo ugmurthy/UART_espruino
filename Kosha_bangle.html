@@ -196,8 +196,8 @@ Bangle.on('accel', function (xyz) {
     R.data = data;
 
     if (ACCEL && LOADED) {
-        console.log(R);
         signal.push(R);
+        console.log(R);
     }
 });
 
