@@ -64,7 +64,7 @@ function onLine(line) {
   var d = line.split(",");
   if (d.length==4 && d[0]=="A") {
     // we have an accelerometer reading
-    accel.x = parseInt(d[1])/100;
+    accel.x = -1*parseInt(d[1])/100;
     accel.z = parseInt(d[2])/100;
     accel.y = parseInt(d[3])/100;
     render();
