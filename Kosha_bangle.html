@@ -135,7 +135,7 @@ var prev = 0;
 var now;
 var GESTURE = true;
 var ACCEL = true;
-
+const MAX_SAMPLES = 384;
 G={};
 R = {};
 var seqno =0;
@@ -157,6 +157,14 @@ header = {type:"H",ODR:getODR(),gScale:getGscale(),SamplingPeriod:POLL,battery:N
 signal.push(header);
 
 Bangle.on('accel', function (xyz) {
+
+    if (seqno > 384) { // stop operation
+        ACCEL = false;
+        GESTURE = false;
+        Bangle.removeAllListeners("accel");
+        Bangle.removeAllListeners("gesture");
+        NRF.disconnect("End of task");
+    }
     now = getTime();
     // init substructures
     data = {};
