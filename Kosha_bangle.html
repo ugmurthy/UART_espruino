@@ -81,17 +81,21 @@ function getGscale() {
   }
 }
 
-function enableTilt() {
+function enableTilt(disable) {
     // 0x18  CNTL1 pg 40
     cntl1 = Number(readReg(0x18,ret=0));
-    console.log("0x18 : ",int2Bin(cntl1).padStart(8,'0'));
+    //console.log("0x18 : ",int2Bin(cntl1).padStart(8,'0'));
     // setting PC1 to 0 and TPE to 1
-    cntl1 = (0x7F & cntl1) + 0x01;
+    if (disable) {
+        cntl1 = 0x7E & cntl1; // bit 0 and bit 7 to zero
+    } else {
+        cntl1 = (0x7F & cntl1) + 0x01;
+    }
     // write reg
     Bangle.accelWr(0x18,cntl1);
     // write reg with PC1 = 1
     Bangle.accelWr(0x18,cntl1 | 0x80);
-    console.log("0x18 : ",readReg(0x18,ret=1).padStart(8,'0'));
+    //console.log("0x18 : ",readReg(0x18,ret=1).padStart(8,'0'));
 }
 
 function getTilt() {
@@ -185,6 +189,9 @@ Bangle.on('accel', function (xyz) {
     if (seqno>MAX_SAMPLES) {
         ACCEL=false;
         GESTURE=false;
+        if (INCLUDE_TILT) {
+          enableTilt(true);
+        }
         NRF.disconnect();
     }
     if (prev===0) { // first time
