@@ -320,6 +320,8 @@ document.getElementById("btnConnect").addEventListener("click", function() {
 // When we get a line of data, check it and if it's
 // from the accelerometer, update it
 function onLine(line) {
+  console.log("Pos of { ",line.indexOf("{");
+  
   if (line.charAt(4) === '{') {
     console.log("RECEIVED:"+line.substring(4))   
   } else {
