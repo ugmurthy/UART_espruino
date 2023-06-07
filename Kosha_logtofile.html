@@ -22,6 +22,11 @@
     var resultData = "";
     var domResult = document.getElementById('result');
     var domStatus = document.getElementById('status');
+    var btnTxt = document.getElementById('connect');
+   
+    function setButtonTxt(t) {
+       btnTxt.innterHTML = t;
+    }
     function setStatus(t) {
       domStatus.innerHTML = t;
     }
@@ -41,6 +46,8 @@
           return;
         }
         setStatus("Connected");
+        setButtonTxt("Disconnect");
+       
         connection = c;
         // Handle the data we get back, and call 'onLine'
         // whenever we get a line
@@ -51,8 +58,8 @@
           result.value = resultData;
         });
         // First, tell the device
-        connection.write("\x03\x10getData();\n", function() {
-          setStatus("getData() sent.");
+        connection.write("\x03\x10require('accbangle.app.js')\n", function() {
+          setStatus("accbangle.app.js ...!");
         });
       });
     });
