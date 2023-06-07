@@ -320,7 +320,11 @@ document.getElementById("btnConnect").addEventListener("click", function() {
 // When we get a line of data, check it and if it's
 // from the accelerometer, update it
 function onLine(line) {
+  if (line.charAt(4) === '{') {
+    console.log("RECEIVED:"+line.substring(4))   
+  } else {
   console.log("RECEIVED:"+line);
+  }
   /*
   var d = line.split(",");
   if (d.length==4 && d[0]=="A") {
