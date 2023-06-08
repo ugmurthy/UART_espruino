@@ -22,7 +22,7 @@
     var domStatus = document.getElementById('status');
     var btnConnect = document.getElementById('connect');
     var btnStart = document.getElementById('start');
-   
+    var bytesReceived = 0;
     
     function setButtonTxt(t) {
        btnConnect.innterHTML = t;
@@ -37,6 +37,11 @@
       domStatus.innerHTML = t;
     }
 
+    function showResults(l) {
+      console.log(l);
+      result.value += l;
+      
+    }
     // When clicked, connect or disconnect
     var connection;
     
@@ -69,13 +74,24 @@
         connection.write("\x03\x10reset();", function (){
           setStatus("reseting device...");
         })
+        /*
+          buf += d;
+          var l = buf.split("\n");
+          buf = l.pop();
+          l.forEach(onLine);
+        */
         // Handle the data we get back, and call 'onLine'
         // whenever we get a line
         resultData = "";
         connection.on("data", function(d) {
           resultData += d;
-          setStatus(resultData.length+" bytes received");
-          result.value = resultData;
+          bytesReceived = bytesReceived + resultData.length
+          var l = resultData.split("\n");
+          resultData = l.pop(); // last part line received
+          bytesReceived = bytesReceived - resultData.lenght // compensate for balance
+          setStatus(bytesReceived+" bytes received");
+          //result.value = resultData;
+          l.forEach(showResults)
         });
         // First, tell the device
         //connection.write("\x03\x10require('accbangle.app.js')\n", function() {
