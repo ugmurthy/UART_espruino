@@ -10,7 +10,9 @@
     in the text box below. You can click 'Save Data' to save it
     to a file.
   </p>
-  <button id="connect">Connect</button>
+  <div>
+  <button id="connect">Connect</button> <button id="start">Start</button>
+  </div>
   Status: <span id="status"></span><br/>
   <span>Received data:</span><br/>
   <textarea id="result" style="width:100%;height:150px">
@@ -22,10 +24,18 @@
     var resultData = "";
     var domResult = document.getElementById('result');
     var domStatus = document.getElementById('status');
-    var btnTxt = document.getElementById('connect');
+    var btnConnect = document.getElementById('connect');
+    var btnStart = document.getElementById('start');
    
+    
     function setButtonTxt(t) {
-       btnTxt.innterHTML = t;
+       btnConnect.innterHTML = t;
+    }
+    function getButtonStart() {
+      return btnStart.innterHTML;   
+    }
+    function setButtonStart(t) {
+     btnStart.innerHTML=t;
     }
     function setStatus(t) {
       domStatus.innerHTML = t;
@@ -33,6 +43,13 @@
 
     // When clicked, connect or disconnect
     var connection;
+      document.getElementById('start').addEventListener("click",fucntion(){
+          if (getButtonStart()==='Start') {
+             connection.write("\x03\x10require('accbangle.app.js')\n", function() {
+                  setStatus("accbangle.app.js ...!");
+          } 
+                              
+      }
     document.getElementById('connect').addEventListener("click", function() {
       if (connection) {
         connection.close();
