@@ -3,18 +3,21 @@
  <head>
  </head>
  <body>
-  <h1>Log to file</h1>
+  <h1>Bangle2 Data Capture</h1>
+  <h3> V1.1 (8/Jun/2023) </h3>
   <p>This page connects to Bangle2 js device, Click Start after you connect to device and wait for dump of data
   </p>
   <div>
   <button id="connect">Connect</button> <button id="start">Start</button>
   </div>
   Status: <span id="status"></span><br/>
-  <span>Received data:</span><br/>
+  <span>Header data:</span><br/>
   <textarea id="header" style="width:100%;height:50px">
   </textarea>
+  <span>Accellerometer data:</span><br/>
   <textarea id="accel" style="width:100%;height:200px">
   </textarea>
+  <span>Gesture data:</span><br/>
   <textarea id="gesture" style="width:100%;height:150px">
   </textarea>
   <button id="save">Save Data</button>
@@ -24,7 +27,8 @@
     var resultData = "";
     var accData=[];
     var gestureData=[];
-    //var domResult = document.getElementById('accel');
+    var domAccel = document.getElementById('accel');
+    var domGesture=document.getElementById('gesture')
     var domStatus = document.getElementById('status');
     var btnConnect = document.getElementById('connect');
     var btnStart = document.getElementById('start');
@@ -43,23 +47,27 @@
       domStatus.innerHTML = t;
     }
 
+    function scrollDown(ele) {
+      ele.scrollTop = ele.scrollHeight;
+    }
+
     function showResults(l) {
-      console.log(l);
-      //result.value += l;
-      ///
+      
       try {
           ldata=JSON.parse(l);
-          
+          console.log("DATA :",l);
           if (ldata.type==="A") {
                 var msg = ldata.type + ":" + ldata.seqno
                 setStatus(msg)
                 accData.push(ldata);
                 accel.value += l;
+                scrollDown(domAccel);
           }
 
           if (ldata.type==="G") {
                 gestureData.push(ldata);
                 gesture.value += l
+                scrollDown(domGesture);
               }
           
           if (ldata.type==="H") {
@@ -68,7 +76,7 @@
           }
       }   
       catch(err) {
-         setStatus(err.message);
+         console.log(err.message);
       }
       ///
     }
