@@ -4,11 +4,7 @@
  </head>
  <body>
   <h1>Log to file</h1>
-  <p>This page connects to an Espruino device, calls a
-    function called <code>getData()</code> (which you should
-    have created previously) and then stored all data received
-    in the text box below. You can click 'Save Data' to save it
-    to a file.
+  <p>This page connects to Bangle2 js device, Click Start after you connect to device and wait for dump of data
   </p>
   <div>
   <button id="connect">Connect</button> <button id="start">Start</button>
@@ -43,13 +39,16 @@
 
     // When clicked, connect or disconnect
     var connection;
-      document.getElementById('start').addEventListener("click",function(){
-          if (getButtonStart() ==='Start') {
-             console.log("Starting now");
+    
+    document.getElementById('start').addEventListener("click",function(){
+             if (connection ) {
+             console.log("Attempting to Start");
              connection.write("\x03\x10require('accbangle.app.js')\n"), function() {
                   setStatus("accbangle.app.js ...!");
-             } 
-          }                    
+             }
+            } else {
+                console.log("No connection to start");
+            }                    
       })
     document.getElementById('connect').addEventListener("click", function() {
       if (connection) {
