@@ -45,6 +45,7 @@
     var connection;
       document.getElementById('start').addEventListener("click",function(){
           if (getButtonStart() ==='Start') {
+             console.log("Starting now");
              connection.write("\x03\x10require('accbangle.app.js')\n"), function() {
                   setStatus("accbangle.app.js ...!");
              } 
@@ -75,9 +76,9 @@
           result.value = resultData;
         });
         // First, tell the device
-        connection.write("\x03\x10require('accbangle.app.js')\n", function() {
-          setStatus("accbangle.app.js ...!");
-        });
+        //connection.write("\x03\x10require('accbangle.app.js')\n", function() {
+        //  setStatus("accbangle.app.js ...!");
+        //});
       });
     });
     document.getElementById('save').addEventListener("click", function() {
