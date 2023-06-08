@@ -43,9 +43,9 @@
 
     // When clicked, connect or disconnect
     var connection;
-      document.getElementById('start').addEventListener("click",fucntion(){
-          if (getButtonStart()==='Start') {
-             connection.write("\x03\x10require('accbangle.app.js')\n", function() {
+      document.getElementById('start').addEventListener("click",function(){
+          if (getButtonStart() ==='Start') {
+             connection.write("\x03\x10require('accbangle.app.js')\n"), function() {
                   setStatus("accbangle.app.js ...!");
              } 
           }                    
