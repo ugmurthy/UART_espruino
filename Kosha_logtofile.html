@@ -47,9 +47,9 @@
           if (getButtonStart()==='Start') {
              connection.write("\x03\x10require('accbangle.app.js')\n", function() {
                   setStatus("accbangle.app.js ...!");
-          } 
-                              
-      }
+             } 
+          }                    
+      })
     document.getElementById('connect').addEventListener("click", function() {
       if (connection) {
         connection.close();
