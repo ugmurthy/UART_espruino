@@ -110,12 +110,12 @@
       UART.connect(function(c) {
         if (!c) {
           setConnectionStatus("Couldn't connect!");
-          setButtonText("Connect");
+          btnConnect.innerText = "Connect";
           alert("Couldn't connect!");
           return;
         }
         setConnectionStatus("Connected");
-        setButtonText("Disconnect");
+        btnConnect.innerText="Disconnect";
        
         connection = c;
         connection.write("\x03\x10reset();", function (){
