@@ -21,7 +21,7 @@
   <span>Gesture data:</span><br/>
   <textarea id="gesture" style="width:100%;height:150px">
   </textarea>
-  
+
   <button id="save">Save Data</button>
 
    <script src="https://www.espruino.com/js/uart.js"></script>
@@ -58,7 +58,7 @@
       try {
           ldata=JSON.parse(l);
           console.log("DATA :",l);
-          if (ldata.type==="A") {
+          if (ldata.type==="A" || ldata.type==="buffer") {
                 var msg = ldata.type + ":" + ldata.seqno
                 setStatus(msg)
                 accData.push(ldata);
