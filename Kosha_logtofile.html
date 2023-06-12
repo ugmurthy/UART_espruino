@@ -8,7 +8,7 @@
   <p>This page connects to Bangle2 js device, Click Start after you connect to device and wait for dump of data
   </p>
   <div>
-  <button id="connect">Connect</button> <button id="Compact">Start</button>
+  <button id="connect">Connect</button> <button id="Compact">Compact</button>
   </div>
   System Status: <span id="status">Idle</span><br/>   
   Connection Status : <span id="connectionstatus">Disconnected</span><br/> 
@@ -94,7 +94,7 @@
     document.getElementById('Compact').addEventListener("click",function(){
              if (connection ) {
              console.log("TOGGLING COMPACT STORAGE");
-             connection.write("\x03\x10COMPACT_STORATE=!COMPACT_STORAGE\n"), function() {
+             connection.write("\x03\x10COMPACT_STORAGE=!COMPACT_STORAGE\n"), function() {
                   setStatus("Toggled Compact Storage");
              }
             } else {
