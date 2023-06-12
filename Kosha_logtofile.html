@@ -58,7 +58,7 @@
       try {
           ldata=JSON.parse(l);
           console.log("DATA :",l);
-          if (ldata.type==="A" || ldata.type==="buffer") {
+          if (ldata.type==="A" || ldata.hasOwnProperty("buffer")) {
                 var msg = ldata.type + ":" + ldata.seqno
                 setStatus(msg)
                 accData.push(ldata);
