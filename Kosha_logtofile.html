@@ -4,7 +4,7 @@
  </head>
  <body>
   <h1>Bangle2 Data Capture</h1>
-  <h3> V1.1 (8/Jun/2023) </h3>
+  <h3> V1.2 (12/Jun/2023) </h3>
   <p>This page connects to Bangle2 js device, Click Start after you connect to device and wait for dump of data
   </p>
   <div>
@@ -110,11 +110,12 @@
       UART.connect(function(c) {
         if (!c) {
           setConnectionStatus("Couldn't connect!");
+          setButtonText("Connect");
           alert("Couldn't connect!");
           return;
         }
         setConnectionStatus("Connected");
-        setButtonTxt.innerHTML("Disconnect");
+        setButtonText("Disconnect");
        
         connection = c;
         connection.write("\x03\x10reset();", function (){
