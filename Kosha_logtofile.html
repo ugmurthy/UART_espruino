@@ -94,7 +94,7 @@
     document.getElementById('Compact').addEventListener("click",function(){
              if (connection ) {
              console.log("TOGGLING COMPACT STORAGE");
-             var hdr = '\0x03\x10'
+             var hdr = '\n';
              var cmdstr = 'cmd.emit("set",{"COMPACT_STORAGE":"!COMPACT_STORAGE"})'
              var ftr = '\n';
              connection.write("\x03\x10COMPACT_STORAGE=!COMPACT_STORAGE\n"), function() {
