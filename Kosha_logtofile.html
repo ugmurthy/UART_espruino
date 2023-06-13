@@ -102,7 +102,7 @@
              if (connection ) {
              console.log("TOGGLING COMPACT STORAGE");
              var hdr = '\n';
-             var cmdstr = 'cmd.emit("set",{"COMPACT_STORAGE":"!COMPACT_STORAGE"})'
+             var cmdstr = 'cmd.emit("set",{"eval":"COMPACT_STORAGE=!COMPACT_STORAGE"})'
              var ftr = '\n';
              connection.write("\x03\x10COMPACT_STORAGE=!COMPACT_STORAGE\n"), function() {
                   setStatus("Toggled Compact Storage");
@@ -134,8 +134,8 @@
         btnConnect.innerText="Disconnect";
        
         connection = c;
-        connection.write("\x03\x10reset();", function (){
-          setStatus("device rest and ready!");
+        connection.write("\nreset();\n", function (){
+          setStatus("Device ready...");
         })
 
         resultData = "";
