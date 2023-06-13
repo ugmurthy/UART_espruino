@@ -120,7 +120,7 @@
        
         connection = c;
         connection.write("\x03\x10reset();", function (){
-          setStatus("reseting device...");
+          setStatus("device rest and ready!");
         })
 
         resultData = "";
@@ -137,6 +137,9 @@
 
         connection.on('close',function(e){
           btnConnect.innerText="Connect";
+          accel.value="";
+          gesture.value="";
+          header.value="";
           setConnectionStatus("Disconnected");
           setStatus("Idle..");
           console.log("Connection Closed");
