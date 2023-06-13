@@ -3,9 +3,16 @@
  <head>
  </head>
  <body>
-  <h1>Bangle2 Data Capture</h1>
-  <h3> V1.3 (12/Jun/2023) </h3>
-  <p>This page connects to Bangle2 js device, Click Start after you connect to device and wait for dump of data
+  <h1>KOSHA Bangle2 Data Capture</h1>
+  <h3> V1.3 (13/Jun/2023) </h3>
+  <!--
+    V1.0 : Rudimentary capture of BLE data using Bangle2 example code
+    V1.1 : Separate text areas by data type
+    V1.2 : clean up of code relating on.close, button text, status and connection status
+    v1.3 : Added rudimetary command interface to implement Compact 
+  -->
+  <p>This page connects to Bangle2 js device, to capture data 
+     Click "Connect" and then chose KoshaThreshold on the Watch   
   </p>
   <div>
   <button id="connect">Connect</button> <button id="Compact">Compact</button>
@@ -114,8 +121,9 @@
         connection.close();
         connection = undefined;
       }
-      setConnectionStatus("Connecting...");
+      
       UART.connect(function(c) {
+        setConnectionStatus("Connecting...");
         if (!c) {
           setConnectionStatus("Couldn't connect!");
           btnConnect.innerText = "Connect";
