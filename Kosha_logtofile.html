@@ -64,7 +64,7 @@
       try {
           ldata=JSON.parse(l);
           console.log("DATA :",l);
-          if (ldata.type==="A" || ldata.hasOwnProperty("buffer")) {
+          if (ldata.type==="A" || ldata.hasOwnProperty("buffer")|| ldata.type==='C') {
                 var msg = ldata.type + ":" + ldata.seqno
                 setStatus(msg)
                 accData.push(ldata);
@@ -94,9 +94,16 @@
     document.getElementById('Compact').addEventListener("click",function(){
              if (connection ) {
              console.log("TOGGLING COMPACT STORAGE");
+             var hdr = '\0x03\x10'
+             var cmdstr = 'cmd.emit("set",{"COMPACT_STORAGE":"!COMPACT_STORAGE"})'
+             var ftr = '\n';
              connection.write("\x03\x10COMPACT_STORAGE=!COMPACT_STORAGE\n"), function() {
                   setStatus("Toggled Compact Storage");
              }
+             connection.write(hdr+cmdstr+ftr), function() {
+                  setStatus("COMMAND : ",cmdstr);
+             }
+
             } else {
                 console.log("No connection to start");
             }                    
