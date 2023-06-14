@@ -15,7 +15,7 @@
      Click "Connect" and then chose KoshaThreshold on the Watch   
   </p>
   <div>
-  <button id="connect">Connect</button> <button id="Compact">Compact</button>
+  <button id="connect">Connect</button> <button id="start">Start/Stop</button>
   </div>
   System Status: <span id="status">Idle</span><br/>   
   Connection Status : <span id="connectionstatus">Disconnected</span><br/> 
@@ -44,6 +44,7 @@
     var btnConnect = document.getElementById('connect');
     var btnStart = document.getElementById('start');
     var bytesReceived = 0;
+    var START=false;
     
     function setButtonTxt(t) {
        btnConnect.innterHTML = t;
@@ -64,6 +65,14 @@
     
     function scrollDown(ele) {
       ele.scrollTop = ele.scrollHeight;
+    }
+    function execOnDevice(c,cmdstr) {
+      // give c ble connection and cmdstr - sends command to exec cmdstr on device
+      var hdr = '\ncmd.emit("set",{"eval":';
+      var ftr='});\n'
+      c.write(hdr+cmdstr+ftr), function() {
+          setStatus("Executing on Device : ",cmdstr);
+      }
     }
 
     function showResults(l) {
@@ -98,21 +107,16 @@
     // When clicked, connect or disconnect
     var connection;
     
-    document.getElementById('Compact').addEventListener("click",function(){
+    document.getElementById('start').addEventListener("click",function(){
              if (connection ) {
-             console.log("TOGGLING COMPACT STORAGE");
-             var hdr = '\n';
-             var cmdstr = 'cmd.emit("set",{"eval":"COMPACT_STORAGE=!COMPACT_STORAGE"})'
-             var ftr = '\n';
-             connection.write("\x03\x10COMPACT_STORAGE=!COMPACT_STORAGE\n"), function() {
-                  setStatus("Toggled Compact Storage");
-             }
-             connection.write(hdr+cmdstr+ftr), function() {
-                  setStatus("COMMAND : ",cmdstr);
-             }
+              
+              var cmdstr = btnStart.innerText.toLocaleLowerCase=='start' ? "start()" : "stop()";
+              console.log("1 :",cmdstr)
+              btnStart.innerText = btnStart.innerText.toLocaleLowerCase=='start'?'Stop':'Start';
+              execOnDevice(connection,cmdstr);
 
             } else {
-                console.log("No connection to start");
+                console.log("No connection to Device!");
             }                    
       })
     document.getElementById('connect').addEventListener("click", function() {
