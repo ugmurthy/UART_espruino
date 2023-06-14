@@ -4,12 +4,13 @@
  </head>
  <body>
   <h1>KOSHA Bangle2 Data Capture</h1>
-  <h3> V1.3 (13/Jun/2023) </h3>
+  <h3> V1.3 (14/Jun/2023) </h3>
   <!--
     V1.0 : Rudimentary capture of BLE data using Bangle2 example code
     V1.1 : Separate text areas by data type
     V1.2 : clean up of code relating on.close, button text, status and connection status
     v1.3 : Added rudimetary command interface to implement Compact 
+    V1.3 : Added Start/Stop command processor
   -->
   <p>This page connects to Bangle2 js device, to capture data 
      Click "Connect" and then chose KoshaThreshold on the Watch   
@@ -110,9 +111,9 @@
     document.getElementById('start').addEventListener("click",function(){
              if (connection ) {
               
-              var cmdstr = btnStart.innerText.toLocaleLowerCase=='start' ? "start()" : "stop()";
+              var cmdstr = btnStart.innerText.toLowerCase()==='start' ? '"start()"' : '"stop()"';
               console.log("1 :",cmdstr)
-              btnStart.innerText = btnStart.innerText.toLocaleLowerCase=='start'?'Stop':'Start';
+              btnStart.innerText = btnStart.innerText.toLowerCase()=='start'?'Stop':'Start';
               execOnDevice(connection,cmdstr);
 
             } else {
