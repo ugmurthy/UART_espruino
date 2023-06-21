@@ -24,7 +24,6 @@ Bangle.on('accel',function(a) {
 })
 `;
 var accel = new THREE.Vector3( 0, 0, 1 );
-var euler = new THREE.Euler();
 var yaw =0;
 var roll=0;
 var pitch=0;
@@ -75,12 +74,13 @@ function onLine(line) {
     //accel.x = -1*parseInt(d[1])/100;
     //accel.z = parseInt(d[2])/100;
     //accel.y = parseInt(d[3])/100;
-    accel.x = parseInt(d[1])/100;
-    accel.y = parseInt(d[2])/100;
-    accel.z = parseInt(d[3])/100;
+    accel.x = parseInt(d[4])/100;
+    accel.y = parseInt(d[5])/100;
+    accel.z = parseInt(d[6])/100;
     yaw = parseFloat(d[4]);
     roll=parseFloat(d[5]);
     pitch=parseFloat(d[6]);
+
     render();
   }
 }
@@ -104,11 +104,11 @@ function init() {
     document.body.appendChild(renderer.domElement);
 }
 function render() {
-    //cube.lookAt(accel);
+    cube.lookAt(accel);
     console.log(roll,pitch,yaw);
-    cube.rotation.x = roll;
-    cube.rotation.y = pitch;
-    cube.rotation.z = yaw;
+    //cube.rotation.x = roll;
+    //cube.rotation.y = pitch;
+    //cube.rotation.z = yaw;
     renderer.render(scene, camera);
 }
 
