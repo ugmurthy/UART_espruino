@@ -9,17 +9,25 @@
 <script>
 // Code to upload to Bangle.js
 var BANGLE_CODE = `
+Bangle.setCompassPower(1);
 Bangle.on('accel',function(a) {
   var d = [
     "A",
     Math.round(a.x*100),
     Math.round(a.y*100),
-    Math.round(a.z*100)
+    Math.round(a.z*100),
+    Bangle.getCompass().heading*Math.PI/180,
+    Math.atan2(a.y,a.z),
+    Math.atan2(-a.x / (Math.sqrt(a.y*a.y,a.z*a.z)))
     ];
   Bluetooth.println(d.join(","));
 })
 `;
 var accel = new THREE.Vector3( 0, 0, 1 );
+var euler = new THREE.Euler();
+var yaw =0;
+var roll=0;
+var pitch=0;
 
 // When we click the connect button...
 var connection;
@@ -64,9 +72,15 @@ function onLine(line) {
   var d = line.split(",");
   if (d.length==4 && d[0]=="A") {
     // we have an accelerometer reading
-    accel.x = -1*parseInt(d[1])/100;
-    accel.z = parseInt(d[2])/100;
-    accel.y = parseInt(d[3])/100;
+    //accel.x = -1*parseInt(d[1])/100;
+    //accel.z = parseInt(d[2])/100;
+    //accel.y = parseInt(d[3])/100;
+    accel.x = parseInt(d[1])/100;
+    accel.y = parseInt(d[2])/100;
+    accel.z = parseInt(d[3])/100;
+    yaw = parseFloat(d[4]);
+    roll=parseFloat(d[5]);
+    pitch=parseFloat(d[6]);
     render();
   }
 }
@@ -91,6 +105,9 @@ function init() {
 }
 function render() {
     cube.lookAt(accel);
+    cube.rotation.x = roll;
+    cube.rotation.y = pitch;
+    cube.rotation.z = yaw;
     renderer.render(scene, camera);
 }
 
