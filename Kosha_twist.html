@@ -68,7 +68,7 @@ document.getElementById("btnConnect").addEventListener("click", function() {
 // When we get a line of data, check it and if it's
 // from the accelerometer, update it
 function onLine(line) {
-  console.log("RECEIVED:"+line);
+  // console.log("RECEIVED:"+line);
   var d = line.split(",");
   if (d.length==4 && d[0]=="A") {
     // we have an accelerometer reading
@@ -104,7 +104,8 @@ function init() {
     document.body.appendChild(renderer.domElement);
 }
 function render() {
-    cube.lookAt(accel);
+    //cube.lookAt(accel);
+    console.log(roll,pitch,yaw);
     cube.rotation.x = roll;
     cube.rotation.y = pitch;
     cube.rotation.z = yaw;
