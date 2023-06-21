@@ -108,8 +108,8 @@ function init() {
 function render() {
     cube.lookAt(accel);
     //console.log(roll,pitch,yaw);
-    cube.rotation.x = roll;
-    cube.rotation.y = pitch;
+    cube.rotation.x = pitch; //roll;
+    cube.rotation.y = -roll; //pitch;
     cube.rotation.z = yaw;
     renderer.render(scene, camera);
 }
