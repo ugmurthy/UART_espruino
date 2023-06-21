@@ -18,7 +18,7 @@ Bangle.on('accel',function(a) {
     Math.round(a.z*100),
     Bangle.getCompass().heading*Math.PI/180,
     Math.atan2(a.y,a.z),
-    Math.atan2(-a.x / (Math.sqrt(a.y*a.y,a.z*a.z)))
+    Math.atan2(-a.x / (Math.sqrt(a.y*a.y + a.z*a.z)))
     ];
   Bluetooth.println(d.join(","));
 })
