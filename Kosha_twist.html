@@ -69,20 +69,21 @@ document.getElementById("btnConnect").addEventListener("click", function() {
 function onLine(line) {
   // console.log("RECEIVED:"+line);
   var d = line.split(",");
-  console.log("D : ",d);
+  //console.log("D : ",d);
   if (d.length==4 && d[0]=="A") {
     // we have an accelerometer reading
     //accel.x = -1*parseInt(d[1])/100;
     //accel.z = parseInt(d[2])/100;
     //accel.y = parseInt(d[3])/100;
-    accel.x = parseInt(d[4])/100;
-    accel.y = parseInt(d[5])/100;
-    accel.z = parseInt(d[6])/100;
+    accel.x = parseInt(d[4]);
+    accel.y = parseInt(d[5]);
+    accel.z = parseInt(d[6]);
     yaw = parseFloat(d[4]);
     roll=parseFloat(d[5]);
     pitch=parseFloat(d[6]);
-    //console.log("RECEIVED: ",accel);
+    console.log("RECEIVED: ",accel);
     render();
+    console.log("---");
   }
 }
 // WebGL boilerplate
