@@ -75,15 +75,15 @@ function onLine(line) {
     //accel.x = -1*parseInt(d[1])/100;
     //accel.z = parseInt(d[2])/100;
     //accel.y = parseInt(d[3])/100;
-    accel.x = parseInt(d[4]);
-    accel.y = parseInt(d[5]);
-    accel.z = parseInt(d[6]);
+    accel.x = parseInt(d[1])/100;
+    accel.y = parseInt(d[2])/100;
+    accel.z = parseInt(d[3])/100;
     yaw = parseFloat(d[4]);
     roll=parseFloat(d[5]);
     pitch=parseFloat(d[6]);
-    console.log("RECEIVED: ",accel);
+    //console.log("RECEIVED: ",accel);
     render();
-    console.log("---");
+    //console.log("---");
   }
 }
 // WebGL boilerplate
@@ -107,10 +107,10 @@ function init() {
 }
 function render() {
     cube.lookAt(accel);
-    console.log(roll,pitch,yaw);
-    //cube.rotation.x = roll;
-    //cube.rotation.y = pitch;
-    //cube.rotation.z = yaw;
+    //console.log(roll,pitch,yaw);
+    cube.rotation.x = roll;
+    cube.rotation.y = pitch;
+    cube.rotation.z = yaw;
     renderer.render(scene, camera);
 }
 
