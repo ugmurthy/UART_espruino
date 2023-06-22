@@ -80,7 +80,7 @@
       
       try {
           ldata=JSON.parse(l);
-          console.log("DATA :",l);
+          console.log("PROCESSING :",l);
           if (ldata.type==="A" || ldata.hasOwnProperty("buffer")|| ldata.type==='C') {
                 var msg = ldata.type + ":" + ldata.seqno
                 setStatus(msg)
@@ -90,18 +90,21 @@
           }
 
           if (ldata.type==="G") {
-                gestureData.push(ldata);
+                accData.push(ldata)
+                //gestureData.push(ldata);
                 gesture.value += l
                 scrollDown(domGesture);
               }
           
           if (ldata.type==="H") {
+                accData.push(ldata);
                 headerData = ldata;
                 header.value += l;
           }
       }   
       catch(err) {
          console.log(err.message);
+         console.log("REJECTING : ",l);
       }
       ///
     }
@@ -142,6 +145,10 @@
         connection.write("\nreset();\n", function (){
           setStatus("Device ready...");
         })
+        connection.write('\nload("threshold.app.js");\n\n',function(){
+          setStatus("Device ready, App loaded...");
+        })
+        
 
         resultData = "";
         connection.on("data", function(d) {
